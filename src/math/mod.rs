@@ -1,1 +1,1 @@
-mod fundamentals;
+pub mod fundamentals;
