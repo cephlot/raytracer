@@ -57,6 +57,10 @@ impl Tuple {
 		let magnitude = self.magnitude();
 		self/magnitude
 	}
+
+	fn dot(a: Tuple, b: Tuple) -> f64 {
+		a.x*b.x + a.y*b.y + a.z*b.z + a.w*b.w
+	}
  }
 
 impl Add for Tuple {
@@ -274,6 +278,19 @@ mod tests {
 		let v = Tuple::vector(1.0, 2.0, 3.0);
 
 		assert_eq!(v.normalize().magnitude(), 1.0);
+	}
+
+  // ​Scenario​: The dot product of two tuples
+  // ​ 	  ​Given​ a ← vector(1, 2, 3)
+  // ​ 	    ​And​ b ← vector(2, 3, 4)
+  // ​ 	  ​Then​ dot(a, b) = 20
+
+	#[test]
+	fn should_compute_dot_product_correctly() {
+		let a = Tuple::vector(1.0, 2.0, 3.0);
+		let b = Tuple::vector(2.0, 3.0, 4.0);
+
+		assert_eq!(Tuple::dot(a,b), 20.0);
 	}
 }
 
