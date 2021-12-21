@@ -58,8 +58,17 @@ impl Tuple {
 		self/magnitude
 	}
 
-	fn dot(a: Tuple, b: Tuple) -> f64 {
+	/// Computes the dot product of two given vectors
+	fn dot(a: &Tuple, b: &Tuple) -> f64 {
 		a.x*b.x + a.y*b.y + a.z*b.z + a.w*b.w
+	}
+
+	fn cross(a: &Tuple, b: &Tuple) -> Tuple {
+		Tuple::vector(
+			a.y*b.z - a.z*b.y,
+			a.z*b.x - a.x*b.z,
+			a.x*b.y - a.y*b.x
+		)
 	}
  }
 
@@ -280,17 +289,25 @@ mod tests {
 		assert_eq!(v.normalize().magnitude(), 1.0);
 	}
 
-  // ​Scenario​: The dot product of two tuples
-  // ​ 	  ​Given​ a ← vector(1, 2, 3)
-  // ​ 	    ​And​ b ← vector(2, 3, 4)
-  // ​ 	  ​Then​ dot(a, b) = 20
-
 	#[test]
 	fn should_compute_dot_product_correctly() {
 		let a = Tuple::vector(1.0, 2.0, 3.0);
 		let b = Tuple::vector(2.0, 3.0, 4.0);
 
-		assert_eq!(Tuple::dot(a,b), 20.0);
+		assert_eq!(Tuple::dot(&a,&b), 20.0);
+	}
+
+	#[test]
+	fn should_compute_cross_product_correctly() {
+		let a = Tuple::vector(1.0, 2.0, 3.0);
+		let b = Tuple::vector(2.0, 3.0, 4.0);
+		let reference = Tuple::vector(-1.0, 2.0, -1.0);
+
+		assert_eq!(Tuple::cross(&a,&b), reference);
+
+		let reference = Tuple::vector(1.0, -2.0, 1.0);
+
+		assert_eq!(Tuple::cross(&b,&a), reference);
 	}
 }
 
