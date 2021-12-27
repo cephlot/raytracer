@@ -23,17 +23,17 @@ impl Tuple {
     }
 
     /// Determines if given Tuple is a vector
-    fn is_vector(&self) -> bool {
+    pub fn is_vector(&self) -> bool {
         self.w == 0.0
     }
 
     /// Determines if given Tuple is a point
-    fn is_point(&self) -> bool {
+    pub fn is_point(&self) -> bool {
         self.w != 0.0
     }
 
     /// Computes the magnitude of given vector Tuple
-    fn magnitude(&self) -> f64 {
+    pub fn magnitude(&self) -> f64 {
         (self.x.powf(2.0) + self.y.powf(2.0) + self.z.powf(2.0) + self.w.powf(2.0)).sqrt()
     }
 
@@ -44,11 +44,11 @@ impl Tuple {
     }
 
     /// Computes the dot product of two given vectors
-    fn dot(a: &Tuple, b: &Tuple) -> f64 {
+    pub fn dot(a: &Tuple, b: &Tuple) -> f64 {
         a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w
     }
 
-    fn cross(a: &Tuple, b: &Tuple) -> Tuple {
+    pub fn cross(a: &Tuple, b: &Tuple) -> Tuple {
         Tuple::vector(
             a.y * b.z - a.z * b.y,
             a.z * b.x - a.x * b.z,
