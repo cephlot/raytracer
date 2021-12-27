@@ -2,7 +2,7 @@
 
 use std::ops::{Add, Div, Mul, Neg, Sub};
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct Color {
     pub r: f64,
     pub g: f64,
@@ -13,6 +13,12 @@ impl Color {
     /// Creates a new color
     pub fn new(r: f64, g: f64, b: f64) -> Color {
         Color { r, g, b }
+    }
+}
+
+impl Default for Color {
+    fn default() -> Color {
+        Color { r: 0.0, g: 0.0, b: 0.0 }
     }
 }
 
