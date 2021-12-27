@@ -3,7 +3,7 @@
 use std::ops::{Add, Div, Mul, Neg, Sub};
 
 /// 3 Dimensional Tuple struct representing points or vectors.
-#[derive(PartialEq, PartialOrd, Debug, Clone, Copy)]
+#[derive(PartialOrd, Debug, Clone, Copy)]
 pub struct Tuple {
     pub x: f64,
     pub y: f64,
@@ -119,6 +119,15 @@ impl Div<f64> for Tuple {
         self.w /= rhs;
 
         self
+    }
+}
+
+impl PartialEq for Tuple {
+    fn eq(&self, other: &Tuple) -> bool {
+        (self.x - other.x).abs() < f64::EPSILON &&
+        (self.y - other.y).abs() < f64::EPSILON &&
+        (self.z - other.z).abs() < f64::EPSILON &&
+        (self.w - other.w).abs() < f64::EPSILON
     }
 }
 

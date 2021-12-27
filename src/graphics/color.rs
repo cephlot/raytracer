@@ -1,14 +1,86 @@
-//! Fundamental color component
+//! Fundamental color component 
 
+use std::ops::{Add, Div, Mul, Neg, Sub};
+
+#[derive(Debug)]
 pub struct Color {
-    pub r: f32,
-    pub g: f32,
-    pub b: f32,
+    pub r: f64,
+    pub g: f64,
+    pub b: f64,
 }
 
 impl Color {
-    pub fn new(r: f32, g: f32, b: f32) -> Color {
+    /// Creates a new color
+    pub fn new(r: f64, g: f64, b: f64) -> Color {
         Color { r, g, b }
+    }
+}
+
+impl Add for Color {
+    type Output = Color;
+
+    fn add(mut self, other: Color) -> Color {
+        self.r += other.r;
+        self.g += other.g;
+        self.b += other.b;
+
+        self
+    }
+}
+
+impl Sub for Color {
+    type Output = Color;
+
+    fn sub(mut self, other: Color) -> Color {
+        self.r -= other.r;
+        self.g -= other.g;
+        self.b -= other.b;
+
+        self
+    }
+}
+
+impl Neg for Color {
+    type Output = Color;
+
+    fn neg(mut self) -> Color {
+        self.r = -self.r;
+        self.g = -self.g;
+        self.b = -self.b;
+
+        self
+    }
+}
+
+impl Mul<f64> for Color {
+    type Output = Color;
+
+    fn mul(mut self, rhs: f64) -> Color {
+        self.r *= rhs;
+        self.g *= rhs;
+        self.b *= rhs;
+
+        self
+    }
+}
+
+impl Div<f64> for Color {
+    type Output = Color;
+
+    fn div(mut self, rhs: f64) -> Color {
+        self.r /= rhs;
+        self.g /= rhs;
+        self.b /= rhs;
+
+        self
+    }
+}
+
+impl PartialEq for Color {
+    fn eq(&self, other: &Color) -> bool {
+        (self.r - other.r).abs() < f64::EPSILON &&
+        (self.g - other.g).abs() < f64::EPSILON &&
+        (self.b - other.b).abs() < f64::EPSILON
     }
 }
 
@@ -23,5 +95,23 @@ mod tests {
         assert_eq!(c.r, -0.5);
         assert_eq!(c.g, 0.4);
         assert_eq!(c.b, 1.7);
+    }
+
+    #[test]
+    fn adding_colors_should_compute_correctly() {
+        let a = Color::new(0.9, 0.6, 0.75);
+        let b = Color::new(0.7, 0.1, 0.25);
+        let reference = Color::new(1.6, 0.7, 1.0);
+        
+        assert_eq!(reference, a+b);
+    }
+
+    #[test]
+    fn subtracting_colors_should_compute_correctly() {
+        let a = Color::new(0.9, 0.6, 0.75);
+        let b = Color::new(0.7, 0.1, 0.25);
+        let reference = Color::new(0.2, 0.5, 0.5);
+
+        assert_eq!(reference, a-b);
     }
 }
