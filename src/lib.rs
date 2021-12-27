@@ -1,6 +1,7 @@
 //! Raytracer library
 
 pub mod math;
+pub mod graphics;
 
 use math::fundamentals::Tuple;
 
