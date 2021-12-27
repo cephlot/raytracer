@@ -64,6 +64,18 @@ impl Mul<f64> for Color {
     }
 }
 
+impl Mul for Color {
+    type Output = Color;
+
+    fn mul(mut self, rhs: Color) -> Color {
+        self.r *= rhs.r;
+        self.g *= rhs.g;
+        self.b *= rhs.b;
+
+        self
+    }
+}
+
 impl Div<f64> for Color {
     type Output = Color;
 
@@ -113,5 +125,22 @@ mod tests {
         let reference = Color::new(0.2, 0.5, 0.5);
 
         assert_eq!(reference, a-b);
+    }
+
+    #[test]
+    fn multiplying_color_by_scalar_computes_correctly() {
+        let c = Color::new(0.2, 0.3, 0.4);
+        let reference = Color::new(0.4, 0.6, 0.8);
+
+        assert_eq!(reference, c*2.0);
+    }
+
+    #[test]
+    fn mutiplying_colors_should_compute_correctly() {
+        let a = Color::new(1.0, 0.2, 0.4);
+        let b = Color::new(0.9, 1.0, 0.1);
+        let reference = Color::new(0.9, 0.2, 0.04);
+
+        assert_eq!(reference, a*b);
     }
 }
