@@ -1,7 +1,7 @@
 //! Binary example
 
 use std::fs;
-use raylib::{math::fundamentals::Tuple, Environment, Projectile, graphics};
+use libray::{math::fundamentals::Tuple, Environment, Projectile, graphics};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut p = Projectile {
