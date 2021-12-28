@@ -11,9 +11,6 @@ addons:
 
 # run builds for all the trains (and more)
 rust:
-  - nightly
-  - beta
-  # check it compiles on the latest stable compiler
   - stable
 matrix:
   allow_failures:
@@ -28,18 +25,15 @@ before_script:
 # the main build
 script:
   - |
-      travis-cargo build &&
-      travis-cargo test &&
-      travis-cargo bench &&
-      travis-cargo --only stable doc
-after_success:
-  # upload the documentation from the build with stable (automatically only actually
-  # runs on the master branch, not individual PRs)
-  - travis-cargo --only stable doc-upload --branch main
-  # measure code coverage and upload to coveralls.io (the verify
-  # argument mitigates kcov crashes due to malformed debuginfo, at the
-  # cost of some speed <https://github.com/huonw/travis-cargo/issues/12>)
-  - travis-cargo coveralls --no-sudo --verify
+      cargo build &&
+      cargo test &&
+      cargo bench
+after_success: |
+    cargo doc \
+    && echo '<meta http-equiv=refresh content=0;url=libray/index.html>' > target/doc/index.html && \
+    sudo pip install ghp-import && \
+    ghp-import -n target/doc && \
+    git push -qf https://${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git gh-pages
 
 env:
   global:
