@@ -1,33 +1,36 @@
 if: branch = main
 language: rust
-rust:
-    - stable
-    - nightly
-matrix:
-    allow_failures:
-        - rust: nightly
-before_script:
-    - |
-        pip install 'travis-cargo<0.2' --use && export PATH=$HOME/.local/bin:$PATH
-script:
-    - |
-        travis-cargo build &&
-        travis-cargo test &&
-        travis-cargo bench &&
-        travis-cargo --only stable doc
+# necessary for `travis-cargo coveralls --no-sudo`
 addons:
-    apt:
-        packages:
-            - libcurl4-openssl-dev
-            - libelf-dev
-            - libdw-dev
-after_success:
-    - travis-cargo --only stable doc-upload
-    - travis-cargo coveralls --no-sudo
-notifications:
-    email:
-        on_success: never
+  apt:
+    packages:
+      - libcurl4-openssl-dev
+      - libelf-dev
+      - libdw-dev
+      - binutils-dev # optional: only required for the --verify flag of coveralls
+
+# run builds for all the trains (and more)
+rust:
+  - stable
+matrix:
+  allow_failures:
+  - rust: nightly
+
+# the main build
+script:
+  - |
+      cargo build &&
+      cargo test &&
+      cargo bench
+after_success: |
+    cargo doc \
+    && echo '<meta http-equiv=refresh content=0;url=libray/index.html>' > target/doc/index.html && \
+    sudo pip install ghp-import && \
+    ghp-import -n target/doc && \
+    git push -qf https://${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git gh-pages
+
 env:
-    global:
-        - TRAVIS_CARGO_NIGHTLY_FEATURE=dev
-        - secure:
+  global:
+    # override the default `--features unstable` used for the nightly branch (optional)
+    - TRAVIS_CARGO_NIGHTLY_FEATURE=nightly
+    - secure: c4UfJYV85NZLLhCri5PXfFqLT5V9PQC40euc/4ZNoU/xMioAaBcpFRqglelpt6W9VhXHZK6nto34ri2SVHcg/CxXgke6jZItcA55lmIe7NUL93FP4LNrvAhWuI/tRxg3roLvMfEZ1A3m7fK/f+tH4oRNRtIUD8PDa/AqflNpExxOl+Ge6dkTJca+YviabBFBdL4xuZ+gMs4UBJ3LyLgYXFEMm4B2qPHcD/zLws/0neMyDmaNsWTHLgvKFknzBxTfarh0sBuhVYDvoDMiLbyQf5hkPhWnCVevsICjpA4/g1zaIIxTUjgYE6eP6mhqXioJg1VmPivqQrw+IjX4GE+thhDF37FmkrbuCQMuBS+SCP+eDseF+wcW8gqmNZKGXHisQX7MhCdS6f6dRxc9XGFgjcbnkyWXyZaxa4GANsG89GgvjPgxcT6E/YJ1rSduYNPFrArxf6piGTlIurZn3l0UIDf+KzBA1OWlvTKBqg8r1Sly+ktl3LGK4iB1i/H5PnXc3Wh0O9iFalJDEWwvzrlPCLfTgH1+kK7e3UI5Wk4JeE7RP/g5ylr83B+84DKayQcfekXq6Y3h8XU2zd0C/bFA5xoKyHoZwyLElOBYrvbP10rNbjzUfM8Y8rt4WSXQBtbZCifCOFTMIXAqG0bvcLt5CUggTKQcxAGPBYzWqix6IEY=
