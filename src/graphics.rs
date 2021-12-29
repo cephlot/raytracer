@@ -1,6 +1,7 @@
 //! Graphics module
 //!
 //! Contains graphical utility functions.
+
 mod canvas;
 mod color;
 

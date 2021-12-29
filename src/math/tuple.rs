@@ -1,5 +1,5 @@
-//! Fundamental mathematical components
-
+//! Matrix representation and operations
+//! 
 use std::ops::{Add, Div, Mul, Neg, Sub};
 
 /// 3 Dimensional Tuple struct representing points or vectors.
