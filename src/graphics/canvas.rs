@@ -13,20 +13,15 @@ pub struct Canvas {
 impl Canvas {
     /// Creates a new canvas, given a width and a height
     pub fn new(width: usize, height: usize) -> Canvas {
-        Canvas { 
-            width, 
-            height, 
-            pixels: vec![vec![color::Color::default(); width]; height] 
+        Canvas {
+            width,
+            height,
+            pixels: vec![vec![color::Color::default(); width]; height],
         }
     }
 
     /// Writes a pixel to the canvas at a point with the given color
-    pub fn write_pixel(
-        &mut self, 
-        width: usize, 
-        height: usize, 
-        color: color::Color
-    ) -> () {
+    pub fn write_pixel(&mut self, width: usize, height: usize, color: color::Color) -> () {
         self.pixels[height][width] = color;
     }
 
@@ -36,10 +31,15 @@ impl Canvas {
     }
 
     /// Converts the canvas to a PPM-encoded string
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// // You can use this function to write the encoded string to a file
+    /// std::fs::write("ballistics.ppm", c.to_ppm())?;
+    /// ```
     pub fn to_ppm(&self) -> String {
-        let mut s = String::from(
-            format!("P3\n{} {}\n255", self.width, self.height)
-        );
+        let mut s = String::from(format!("P3\n{} {}\n255", self.width, self.height));
 
         for i in &self.pixels {
             s.push('\n');
@@ -48,9 +48,9 @@ impl Canvas {
 
             for j in i {
                 let st = &format!("{}", clamp(j.r)).to_owned();
-                
-                if z.len() + st.len() >=70 {
-                    z.remove(z.len()-1);
+
+                if z.len() + st.len() >= 70 {
+                    z.remove(z.len() - 1);
                     z.push('\n');
                     s.push_str(&z.to_owned());
                     z = String::new();
@@ -60,31 +60,31 @@ impl Canvas {
 
                 let st = &format!("{}", clamp(j.g)).to_owned();
 
-                if z.len() + st.len() >=70 {
-                    z.remove(z.len()-1);
+                if z.len() + st.len() >= 70 {
+                    z.remove(z.len() - 1);
                     z.push('\n');
                     s.push_str(&z.to_owned());
                     z = String::new();
                 }
-                
+
                 z.push_str(&format!("{} ", st));
 
                 let st = &format!("{}", clamp(j.b)).to_owned();
 
-                if z.len() + st.len() >=70 {
-                    z.remove(z.len()-1);
+                if z.len() + st.len() >= 70 {
+                    z.remove(z.len() - 1);
                     z.push('\n');
                     s.push_str(&z.to_owned());
                     z = String::new();
                 }
-                
+
                 z.push_str(&format!("{} ", st));
             }
 
-            z.remove(z.len()-1);
+            z.remove(z.len() - 1);
             s.push_str(&z.to_owned());
         }
-        
+
         s.push('\n');
         s
     }
@@ -96,14 +96,14 @@ fn clamp(v: f64) -> u8 {
     } else if v > 1.0 {
         255
     } else {
-        (v*(255 as f64)).ceil() as u8
+        (v * (255 as f64)).ceil() as u8
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use super::color::Color;
+    use super::*;
 
     #[test]
     fn should_contain_correct_data() {
@@ -166,4 +166,3 @@ mod tests {
         assert_eq!('\n', c.to_ppm().chars().last().unwrap());
     }
 }
-

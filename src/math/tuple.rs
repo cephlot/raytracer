@@ -11,17 +11,30 @@ pub struct Tuple {
     pub y: f64,
     /// z-value of the tuple
     pub z: f64,
-    /// w-value of the tuple. A non-zero value indicates a Point
+    /// w-value of the tuple. A non-zero value indicates a point, otherwise a
+    /// vector
     pub w: f64,
 }
 
 impl Tuple {
-    /// Creates a new point Tuple
+    /// Creates a new point Tuple where `w` is `1.0`
+    ///
+    /// # Arguments:
+    ///
+    /// * `x` - x value of point
+    /// * `y` - y value of point
+    /// * `z` - z value of point
     pub fn point(x: f64, y: f64, z: f64) -> Tuple {
         Tuple { x, y, z, w: 1.0 }
     }
 
-    /// Creates a new vector Tuple
+    /// Creates a new vector Tuple where `w` is `0.0`
+    ///
+    /// # Arguments:
+    ///
+    /// * `x` - x value of point
+    /// * `y` - y value of point
+    /// * `z` - z value of point
     pub fn vector(x: f64, y: f64, z: f64) -> Tuple {
         Tuple { x, y, z, w: 0.0 }
     }
@@ -36,23 +49,32 @@ impl Tuple {
         self.w != 0.0
     }
 
-    /// Computes the magnitude of given vector Tuple
+    /// Computes the magnitude of given vector Tuple using Pythagoras' theorem
     pub fn magnitude(&self) -> f64 {
         (self.x.powf(2.0) + self.y.powf(2.0) + self.z.powf(2.0) + self.w.powf(2.0)).sqrt()
     }
 
     /// Normalizes the given vector Tuple to a unit vector
     pub fn normalize(self) -> Tuple {
-        let magnitude = self.magnitude();
-        self / magnitude
+        self / self.magnitude()
     }
 
-    /// Computes the dot product of two given vectors
+    /// Computes the dot product of two given vectors and returns a float
+    ///
+    /// # Arguments
+    ///
+    /// * `a` - vector of LHS
+    /// * `b` - vector of RHS
     pub fn dot(a: &Tuple, b: &Tuple) -> f64 {
         a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w
     }
 
-    /// Computes the cross product of two given vectors
+    /// Computes the cross product of two given vectors and returns a vector
+    ///
+    /// # Arguments
+    ///
+    /// * `a` - vector of LHS
+    /// * `b` - vector of RHS
     pub fn cross(a: &Tuple, b: &Tuple) -> Tuple {
         Tuple::vector(
             a.y * b.z - a.z * b.y,
@@ -129,10 +151,10 @@ impl Div<f64> for Tuple {
 
 impl PartialEq for Tuple {
     fn eq(&self, other: &Tuple) -> bool {
-        (self.x - other.x).abs() < f64::EPSILON &&
-        (self.y - other.y).abs() < f64::EPSILON &&
-        (self.z - other.z).abs() < f64::EPSILON &&
-        (self.w - other.w).abs() < f64::EPSILON
+        (self.x - other.x).abs() < f64::EPSILON
+            && (self.y - other.y).abs() < f64::EPSILON
+            && (self.z - other.z).abs() < f64::EPSILON
+            && (self.w - other.w).abs() < f64::EPSILON
     }
 }
 

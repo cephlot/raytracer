@@ -1,12 +1,12 @@
 //! Binary example
 
+use libray::{graphics, math::Tuple, Environment, Projectile};
 use std::fs;
-use libray::{math::Tuple, Environment, Projectile, graphics};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut p = Projectile {
         position: Tuple::point(0.0, 1.0, 0.0),
-        velocity: Tuple::vector(1.0, 1.8, 0.0).normalize()*11.25,
+        velocity: Tuple::vector(1.0, 1.8, 0.0).normalize() * 11.25,
     };
     let e = Environment {
         gravity: Tuple::vector(0.0, -0.1, 0.0),
@@ -21,9 +21,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         i += 1;
         println!("{}: {:?}", i, p.position);
         c.write_pixel(
-            ((p.position.x).ceil() as usize)-1, 
-            (550-((p.position.y).ceil() as usize))-1, 
-            red
+            ((p.position.x).ceil() as usize) - 1,
+            (550 - ((p.position.y).ceil() as usize)) - 1,
+            red,
         );
     }
 

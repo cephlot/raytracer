@@ -1,2 +1,6 @@
+# Exclude build files
 /target
 Cargo.lock
+
+# Exclude any generated .ppm image files
+*.ppm
