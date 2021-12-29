@@ -13,25 +13,8 @@
     unused_qualifications
 )]
 
-/// Math module
-///
-/// Contains fundamental math type and methods.
-pub mod math {
-    mod tuple;
-
-    pub use tuple::Tuple;
-}
-
-/// Graphics module
-///
-/// Contains graphical utility functions.
-pub mod graphics {
-    mod canvas;
-    mod color;
-
-    pub use canvas::Canvas;
-    pub use color::Color;
-}
+pub mod graphics;
+pub mod math;
 
 use math::Tuple;
 
