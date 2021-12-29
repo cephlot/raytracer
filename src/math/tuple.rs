@@ -5,9 +5,13 @@ use std::ops::{Add, Div, Mul, Neg, Sub};
 /// 3 Dimensional Tuple struct representing points or vectors.
 #[derive(PartialOrd, Debug, Clone, Copy)]
 pub struct Tuple {
+    /// x-value of the tuple
     pub x: f64,
+    /// y-value of the tuple
     pub y: f64,
+    /// z-value of the tuple
     pub z: f64,
+    /// w-value of the tuple. A non-zero value indicates a Point
     pub w: f64,
 }
 
@@ -48,6 +52,7 @@ impl Tuple {
         a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w
     }
 
+    /// Computes the cross product of two given vectors
     pub fn cross(a: &Tuple, b: &Tuple) -> Tuple {
         Tuple::vector(
             a.y * b.z - a.z * b.y,

@@ -1,13 +1,17 @@
 use super::color;
 
+/// Represents a two-dimensional grid of pixels
 #[derive(Debug, Clone)]
 pub struct Canvas {
+    /// Width of the canvas
     pub width: usize,
+    /// Height of the canvas
     pub height: usize,
     pixels: Vec<Vec<color::Color>>,
 }
 
 impl Canvas {
+    /// Creates a new canvas, given a width and a height
     pub fn new(width: usize, height: usize) -> Canvas {
         Canvas { 
             width, 
@@ -16,6 +20,7 @@ impl Canvas {
         }
     }
 
+    /// Writes a pixel to the canvas at a point with the given color
     pub fn write_pixel(
         &mut self, 
         width: usize, 
@@ -25,10 +30,12 @@ impl Canvas {
         self.pixels[height][width] = color;
     }
 
+    /// Returns the color of the pixel on the canvas at the given point
     pub fn pixel_at(&self, width: usize, height: usize) -> color::Color {
         self.pixels[height][width]
     }
 
+    /// Converts the canvas to a PPM-encoded string
     pub fn to_ppm(&self) -> String {
         let mut s = String::from(
             format!("P3\n{} {}\n255", self.width, self.height)
