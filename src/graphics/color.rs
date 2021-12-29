@@ -2,10 +2,14 @@
 
 use std::ops::{Add, Div, Mul, Neg, Sub};
 
+/// Three-dimensional color representation
 #[derive(Debug, Clone, Copy)]
 pub struct Color {
+    /// Red value
     pub r: f64,
+    /// Green value
     pub g: f64,
+    /// Blue value
     pub b: f64,
 }
 

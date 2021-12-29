@@ -1,7 +1,7 @@
 //! Binary example
 
 use std::fs;
-use libray::{math::fundamentals::Tuple, Environment, Projectile, graphics};
+use libray::{math::Tuple, Environment, Projectile, graphics};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut p = Projectile {
@@ -13,8 +13,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         wind: Tuple::vector(-0.01, 0.0, 0.0),
     };
     let mut i = 0;
-    let mut c = graphics::canvas::Canvas::new(900, 550);
-    let red = graphics::color::Color::new(1.0, 0.0, 0.0);
+    let mut c = graphics::Canvas::new(900, 550);
+    let red = graphics::Color::new(1.0, 0.0, 0.0);
 
     while p.position.y > 0.0 {
         p = e.tick(p);
