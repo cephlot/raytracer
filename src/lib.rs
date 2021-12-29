@@ -14,6 +14,8 @@
 )]
 
 /// Math module
+///
+/// Contains fundamental math type and methods.
 pub mod math {
     mod tuple;
 
@@ -21,6 +23,8 @@ pub mod math {
 }
 
 /// Graphics module
+///
+/// Contains graphical utility functions.
 pub mod graphics {
     mod canvas;
     mod color;
