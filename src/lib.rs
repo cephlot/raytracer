@@ -19,7 +19,7 @@ pub mod math;
 use math::Tuple;
 
 /// Projectile struct
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy)]]
 pub struct Projectile {
     /// Tuple representing projectile position
     pub position: Tuple,
