@@ -1,6 +1,7 @@
 //! Matrix representation and operations
-//! 
-use std::ops::{Add, Div, Mul, Neg, Sub};
+//!
+use std::convert::From;
+use std::ops::{Add, Div, Index, Mul, Neg, Sub};
 
 /// 3 Dimensional Tuple struct representing points or vectors.
 #[derive(PartialOrd, Debug, Clone, Copy)]
@@ -17,6 +18,18 @@ pub struct Tuple {
 }
 
 impl Tuple {
+    /// Creates a new Tuple
+    ///
+    /// # Arguments:
+    ///
+    /// * `x` - x value of tuple
+    /// * `y` - y value of tuple
+    /// * `z` - z value of tuple
+    /// * `w` - w value of tuple
+    pub fn new(x: f64, y: f64, z: f64, w: f64) -> Tuple {
+        Tuple { x, y, z, w }
+    }
+
     /// Creates a new point Tuple where `w` is `1.0`
     ///
     /// # Arguments:
@@ -155,6 +168,35 @@ impl PartialEq for Tuple {
             && (self.y - other.y).abs() < f64::EPSILON
             && (self.z - other.z).abs() < f64::EPSILON
             && (self.w - other.w).abs() < f64::EPSILON
+    }
+}
+
+impl Index<usize> for Tuple {
+    type Output = f64;
+
+    fn index(&self, idx: usize) -> &f64 {
+        match idx {
+            0 => &self.x,
+            1 => &self.y,
+            2 => &self.z,
+            3 => &self.w,
+            _ => panic!("Incorrect index"),
+        }
+    }
+}
+
+impl From<Vec<f64>> for Tuple {
+    fn from(vec: Vec<f64>) -> Tuple {
+        if vec.len() != 4 {
+            panic!("Incorrect vector length")
+        }
+
+        Tuple {
+            x: vec[0],
+            y: vec[1],
+            z: vec[2],
+            w: vec[3],
+        }
     }
 }
 
