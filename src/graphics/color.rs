@@ -1,5 +1,4 @@
-//! Fundamental color component 
-
+/// Fundamental color component
 use std::ops::{Add, Div, Mul, Neg, Sub};
 
 /// Three-dimensional color representation
@@ -11,18 +10,29 @@ pub struct Color {
     pub g: f64,
     /// Blue value
     pub b: f64,
+    _private: (),
 }
 
 impl Color {
     /// Creates a new color
     pub fn new(r: f64, g: f64, b: f64) -> Color {
-        Color { r, g, b }
+        Color {
+            r,
+            g,
+            b,
+            _private: (),
+        }
     }
 }
 
 impl Default for Color {
     fn default() -> Color {
-        Color { r: 0.0, g: 0.0, b: 0.0 }
+        Color {
+            r: 0.0,
+            g: 0.0,
+            b: 0.0,
+            _private: (),
+        }
     }
 }
 
@@ -100,9 +110,9 @@ impl Div<f64> for Color {
 
 impl PartialEq for Color {
     fn eq(&self, other: &Color) -> bool {
-        (self.r - other.r).abs() < f64::EPSILON &&
-        (self.g - other.g).abs() < f64::EPSILON &&
-        (self.b - other.b).abs() < f64::EPSILON
+        (self.r - other.r).abs() < f64::EPSILON
+            && (self.g - other.g).abs() < f64::EPSILON
+            && (self.b - other.b).abs() < f64::EPSILON
     }
 }
 
@@ -113,7 +123,7 @@ mod tests {
     #[test]
     fn new_color_contains_correct_values() {
         let c = Color::new(-0.5, 0.4, 1.7);
-        
+
         assert_eq!(c.r, -0.5);
         assert_eq!(c.g, 0.4);
         assert_eq!(c.b, 1.7);
@@ -124,8 +134,8 @@ mod tests {
         let a = Color::new(0.9, 0.6, 0.75);
         let b = Color::new(0.7, 0.1, 0.25);
         let reference = Color::new(1.6, 0.7, 1.0);
-        
-        assert_eq!(reference, a+b);
+
+        assert_eq!(reference, a + b);
     }
 
     #[test]
@@ -134,7 +144,7 @@ mod tests {
         let b = Color::new(0.7, 0.1, 0.25);
         let reference = Color::new(0.2, 0.5, 0.5);
 
-        assert_eq!(reference, a-b);
+        assert_eq!(reference, a - b);
     }
 
     #[test]
@@ -142,7 +152,7 @@ mod tests {
         let c = Color::new(0.2, 0.3, 0.4);
         let reference = Color::new(0.4, 0.6, 0.8);
 
-        assert_eq!(reference, c*2.0);
+        assert_eq!(reference, c * 2.0);
     }
 
     #[test]
@@ -151,6 +161,6 @@ mod tests {
         let b = Color::new(0.9, 1.0, 0.1);
         let reference = Color::new(0.9, 0.2, 0.04);
 
-        assert_eq!(reference, a*b);
+        assert_eq!(reference, a * b);
     }
 }

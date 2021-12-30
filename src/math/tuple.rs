@@ -1,6 +1,7 @@
-//! Fundamental mathematical components
-
-use std::ops::{Add, Div, Mul, Neg, Sub};
+//! Matrix representation and operations
+//!
+use std::convert::From;
+use std::ops::{Add, Div, Index, Mul, Neg, Sub};
 
 /// 3 Dimensional Tuple struct representing points or vectors.
 #[derive(PartialOrd, Debug, Clone, Copy)]
@@ -11,17 +12,42 @@ pub struct Tuple {
     pub y: f64,
     /// z-value of the tuple
     pub z: f64,
-    /// w-value of the tuple. A non-zero value indicates a Point
+    /// w-value of the tuple. A non-zero value indicates a point, otherwise a
+    /// vector
     pub w: f64,
 }
 
 impl Tuple {
-    /// Creates a new point Tuple
+    /// Creates a new Tuple
+    ///
+    /// # Arguments:
+    ///
+    /// * `x` - x value of tuple
+    /// * `y` - y value of tuple
+    /// * `z` - z value of tuple
+    /// * `w` - w value of tuple
+    pub fn new(x: f64, y: f64, z: f64, w: f64) -> Tuple {
+        Tuple { x, y, z, w }
+    }
+
+    /// Creates a new point Tuple where `w` is `1.0`
+    ///
+    /// # Arguments:
+    ///
+    /// * `x` - x value of point
+    /// * `y` - y value of point
+    /// * `z` - z value of point
     pub fn point(x: f64, y: f64, z: f64) -> Tuple {
         Tuple { x, y, z, w: 1.0 }
     }
 
-    /// Creates a new vector Tuple
+    /// Creates a new vector Tuple where `w` is `0.0`
+    ///
+    /// # Arguments:
+    ///
+    /// * `x` - x value of point
+    /// * `y` - y value of point
+    /// * `z` - z value of point
     pub fn vector(x: f64, y: f64, z: f64) -> Tuple {
         Tuple { x, y, z, w: 0.0 }
     }
@@ -36,23 +62,32 @@ impl Tuple {
         self.w != 0.0
     }
 
-    /// Computes the magnitude of given vector Tuple
+    /// Computes the magnitude of given vector Tuple using Pythagoras' theorem
     pub fn magnitude(&self) -> f64 {
         (self.x.powf(2.0) + self.y.powf(2.0) + self.z.powf(2.0) + self.w.powf(2.0)).sqrt()
     }
 
     /// Normalizes the given vector Tuple to a unit vector
     pub fn normalize(self) -> Tuple {
-        let magnitude = self.magnitude();
-        self / magnitude
+        self / self.magnitude()
     }
 
-    /// Computes the dot product of two given vectors
+    /// Computes the dot product of two given vectors and returns a float
+    ///
+    /// # Arguments
+    ///
+    /// * `a` - vector of LHS
+    /// * `b` - vector of RHS
     pub fn dot(a: &Tuple, b: &Tuple) -> f64 {
         a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w
     }
 
-    /// Computes the cross product of two given vectors
+    /// Computes the cross product of two given vectors and returns a vector
+    ///
+    /// # Arguments
+    ///
+    /// * `a` - vector of LHS
+    /// * `b` - vector of RHS
     pub fn cross(a: &Tuple, b: &Tuple) -> Tuple {
         Tuple::vector(
             a.y * b.z - a.z * b.y,
@@ -129,10 +164,39 @@ impl Div<f64> for Tuple {
 
 impl PartialEq for Tuple {
     fn eq(&self, other: &Tuple) -> bool {
-        (self.x - other.x).abs() < f64::EPSILON &&
-        (self.y - other.y).abs() < f64::EPSILON &&
-        (self.z - other.z).abs() < f64::EPSILON &&
-        (self.w - other.w).abs() < f64::EPSILON
+        (self.x - other.x).abs() < f64::EPSILON
+            && (self.y - other.y).abs() < f32::EPSILON.into()
+            && (self.z - other.z).abs() < f32::EPSILON.into()
+            && (self.w - other.w).abs() < f32::EPSILON.into()
+    }
+}
+
+impl Index<usize> for Tuple {
+    type Output = f64;
+
+    fn index(&self, idx: usize) -> &f64 {
+        match idx {
+            0 => &self.x,
+            1 => &self.y,
+            2 => &self.z,
+            3 => &self.w,
+            _ => panic!("Incorrect index"),
+        }
+    }
+}
+
+impl From<Vec<f64>> for Tuple {
+    fn from(vec: Vec<f64>) -> Tuple {
+        if vec.len() != 4 {
+            panic!("Incorrect vector length")
+        }
+
+        Tuple {
+            x: vec[0],
+            y: vec[1],
+            z: vec[2],
+            w: vec[3],
+        }
     }
 }
 
