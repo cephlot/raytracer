@@ -1,10 +1,10 @@
-//! Matrix representation and operations
-
 use crate::math::Tuple;
 use std::convert::From;
 use std::ops::{Index, IndexMut, Mul};
 
 /// Matrix representation
+/// 
+/// This struct can be multiplied
 #[derive(Debug, Clone, PartialEq)]
 pub struct Matrix {
     /// No. rows in the Matrix
@@ -33,6 +33,28 @@ impl Matrix {
     }
 
     /// Transposes Matrix and returns a new Matrix
+    /// 
+    /// # Example
+    /// 
+    /// ```
+    /// let a = vec![
+    ///     vec![0.0, 9.0, 3.0, 0.0],
+    ///     vec![9.0, 8.0, 0.0, 8.0],
+    ///     vec![1.0, 8.0, 5.0, 3.0],
+    ///     vec![0.0, 0.0, 5.0, 8.0],
+    /// ];
+    /// let a = Matrix::from(a);
+    ///
+    /// let reference = vec![
+    ///     vec![0.0, 9.0, 1.0, 0.0],
+    ///     vec![9.0, 8.0, 8.0, 0.0],
+    ///     vec![3.0, 0.0, 5.0, 5.0],
+    ///     vec![0.0, 8.0, 3.0, 8.0],
+    /// ];
+    /// let reference = Matrix::from(reference);
+    ///
+    /// assert_eq!(reference, a.transpose());
+    /// ```
     pub fn transpose(&self) -> Matrix {
         let mut new = vec![vec![0.0; self.rows]; self.cols];
 
@@ -43,6 +65,71 @@ impl Matrix {
         }
 
         Matrix::from(new)
+    }
+
+    /// Returns the determinant of the Matrix
+    pub fn determinant(&self) -> f64 {
+        match self.rows {
+            2 => self[(0,0)]*self[(1,1)] - self[(0,1)]*self[(1,0)],
+            _ => {
+                let mut sum = 0.0;
+
+                for i in 0..self.cols {
+                    sum += self[(0, i)]*self.cofactor(0, i);
+                }
+
+                sum
+            },
+        }
+    }
+
+    /// Returns the submatrix with the given row and column removed
+    pub fn submatrix(&self, row: usize, column: usize) -> Matrix {
+        let mut matrix = self.matrix.clone();
+
+        matrix.remove(row);
+
+        for i in 0..matrix.len() {
+            matrix[i].remove(column);
+        }
+
+        Matrix::from(matrix)
+    }
+
+    /// Returns the minor at given row and column
+    pub fn minor(&self, row: usize, column: usize) -> f64 {
+        self.submatrix(row, column).determinant()
+    }
+
+    /// Returs the cofactor at given row and column
+    pub fn cofactor(&self, row: usize, column: usize) -> f64 {
+        if row + column % 2 == 0 {
+            self.minor(row, column)
+        } else {
+            -self.minor(row, column)
+        }
+    }
+
+    /// Returns true if Matrix is invertible, otherwise false
+    pub fn is_invertible(&self) -> bool {
+        self.determinant() != 0.0
+    }
+
+    /// Inverts the given Matrix and returns a new one
+    pub fn inverse(&self) -> Matrix {
+        if !self.is_invertible() {
+            panic!("Matrix is not invertible");
+        }
+
+        let mut matrix = vec![vec![0.0; self.rows]; self.cols];
+
+        for i in 0..self.rows {
+            for j in 0..self.cols {
+                matrix[j][i] = self.cofactor(i, j) / self.determinant();
+            }
+        }
+
+        Matrix::from(matrix)
     }
 }
 
@@ -274,5 +361,178 @@ mod tests {
         let reference = Matrix::from(reference);
 
         assert_eq!(reference, a.transpose());
+        
+        let identity = Matrix::new(4, 4);
+        
+        assert_eq!(identity, identity.transpose());
+    }
+
+    #[test]
+    fn should_compute_correct_determinant_for_2_by_2() {
+        let a = vec![vec![1.0, 5.0], vec![-3.0, 2.0]];
+        let a = Matrix::from(a);
+
+        assert_eq!(17.0, a.determinant());
+    }
+
+    #[test]
+    fn should_return_correct_submatrix() {
+        let a = vec![
+            vec![1.0, 5.0, 0.0],
+            vec![-3.0, 2.0, 7.0],
+            vec![0.0, 6.0, -3.0],
+        ];
+        let a = Matrix::from(a);
+        let reference = vec![vec![-3.0, 2.0], vec![0.0, 6.0]];
+        let reference = Matrix::from(reference);
+
+        assert_eq!(reference, a.submatrix(0,2));
+
+        let a = vec![
+            vec![-6.0, 1.0, 1.0,  6.0],
+            vec![-8.0, 5.0, 8.0, 6.0],
+            vec![-1.0, 0.0, 8.0, 2.0],
+            vec![-7.0, 1.0, -1.0, 1.0],
+        ];
+        let a = Matrix::from(a);
+
+        let reference = vec![
+            vec![-6.0, 1.0,  6.0],
+            vec![-8.0, 8.0, 6.0],
+            vec![-7.0, -1.0, 1.0],
+        ];
+        let reference = Matrix::from(reference);
+
+        assert_eq!(reference, a.submatrix(2, 1));
+    }
+
+    #[test]
+    fn minor_should_compute_correctly() {
+        let a = vec![
+            vec![3.0, 5.0,  0.0],
+            vec![2.0, -1.0, -7.0],
+            vec![6.0, -1.0, 5.0],
+        ];
+        let a = Matrix::from(a);
+        let b = a.submatrix(1, 0);
+        assert_eq!(b.determinant(), a.minor(1, 0));
+    }
+
+    #[test]
+    fn cofactor_should_compute_correctly() {
+        let a = vec![
+            vec![3.0, 5.0,  0.0],
+            vec![2.0, -1.0, -7.0],
+            vec![6.0, -1.0, 5.0],
+        ];
+        let a = Matrix::from(a);    
+        
+        assert_eq!(-12.0, a.minor(0, 0));
+        assert_eq!(-12.0, a.cofactor(0, 0));
+        assert_eq!(25.0, a.minor(1, 0));
+        assert_eq!(-25.0, a.cofactor(1, 0));
+    }
+
+    #[test]
+    fn should_compute_determinants_of_larger_matrices_correctly() {
+        let a = vec![
+            vec![1.0, 2.0,  6.0],
+            vec![-5.0, 8.0, -4.0],
+            vec![2.0, 6.0, 4.0],
+        ];
+        let a = Matrix::from(a);
+
+        assert_eq!(56.0, a.cofactor(0, 0));
+        assert_eq!(12.0, a.cofactor(0, 1));
+        assert_eq!(-46.0, a.cofactor(0, 2));
+        assert_eq!(-196.0, a.determinant());
+
+        let a = vec![
+            vec![-2.0, -8.0, 3.0,  5.0],
+            vec![-3.0, 1.0, 7.0, 3.0],
+            vec![1.0, 2.0, -9.0, 6.0],
+            vec![-6.0, 7.0, 7.0, -9.0],
+        ];
+        let a = Matrix::from(a);
+
+        assert_eq!(690.0, a.cofactor(0, 0));
+        assert_eq!(447.0, a.cofactor(0, 1));
+        assert_eq!(210.0, a.cofactor(0, 2));
+        assert_eq!(51.0, a.cofactor(0, 3));
+        assert_eq!(-4071.0, a.determinant());
+    }
+
+    #[test]
+    fn is_invertible_should_return_correctly() {
+        let a = vec![
+            vec![6.0, 4.0, 4.0, 4.0],
+            vec![5.0, 5.0, 7.0, 6.0],
+            vec![4.0, -9.0, 3.0, -7.0],
+            vec![9.0, 1.0, 7.0, -6.0],
+        ];
+        let a = Matrix::from(a);
+
+        assert_eq!(-2120.0, a.determinant());
+        assert_eq!(true, a.is_invertible());
+
+        let a = vec![
+            vec![-4.0, 2.0, -2.0, -3.0],
+            vec![9.0, 6.0, 2.0, 6.0],
+            vec![0.0, -5.0, 1.0, -5.0],
+            vec![0.0, 0.0, 0.0, 0.0],
+        ];
+        let a = Matrix::from(a);
+
+        assert_eq!(0.0, a.determinant());
+        assert_eq!(false, a.is_invertible());
+    }
+
+    #[test]
+    fn should_inverse_the_matrix_correctly() {
+        let a = vec![
+            vec![-5.0, 2.0, 6.0, -8.0],
+            vec![1.0, -5.0, 1.0, 8.0],
+            vec![7.0, 7.0, -6.0, -7.0],
+            vec![1.0, -3.0, 7.0, 4.0],
+        ];
+        let a = Matrix::from(a);
+        let b = a.inverse();
+
+        let reference = vec![
+            vec![0.21805, 0.45113, 0.24060, -0.04511],
+            vec![-0.80827, -1.45677, -0.44361, 0.52068],
+            vec![-0.07895, -0.22368, -0.05263, 0.19737],
+            vec![-0.52256, -0.81391, -0.30075, 0.30639],
+        ];
+        let reference = Matrix::from(reference);
+
+        assert_eq!(532.0, a.determinant());
+        assert_eq!(-160.0, a.cofactor(2, 3));
+        assert_eq!(-160.0/532.0, b[(3,2)]);
+        assert_eq!(105.0, a.cofactor(3, 2));
+        assert_eq!(105.0/532.0, b[(2,3)]);
+        assert_eq!(reference, b);
+    }
+
+    #[test]
+    fn should_multiply_product_by_its_inverse() {
+        let a = vec![
+            vec![3.0, -9.0, 7.0, 3.0],
+            vec![3.0, -8.0, 2.0, -9.0],
+            vec![-4.0, 4.0, 4.0, 1.0],
+            vec![-6.0, 5.0, -1.0, 1.0],
+        ];
+        let a = Matrix::from(a);
+
+        let b = vec![
+            vec![8.0, 2.0, 2.0, 2.0],
+            vec![3.0, -1.0, 7.0, 0.0],
+            vec![7.0, 0.0, 5.0, 4.0],
+            vec![6.0, -2.0, 0.0, 5.0],
+        ];
+        let b = Matrix::from(b);
+        let c = a.clone()*b.clone();
+
+        assert_eq!(c*(b.inverse()), a);
     }
 }
