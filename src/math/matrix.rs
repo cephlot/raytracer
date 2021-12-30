@@ -3,9 +3,9 @@ use std::convert::From;
 use std::ops::{Index, IndexMut, Mul};
 
 /// Matrix representation
-/// 
+///
 /// This struct can be multiplied
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone)]
 pub struct Matrix {
     /// No. rows in the Matrix
     rows: usize,
@@ -33,9 +33,9 @@ impl Matrix {
     }
 
     /// Transposes Matrix and returns a new Matrix
-    /// 
+    ///
     /// # Example
-    /// 
+    ///
     /// ```
     /// let a = vec![
     ///     vec![0.0, 9.0, 3.0, 0.0],
@@ -70,16 +70,16 @@ impl Matrix {
     /// Returns the determinant of the Matrix
     pub fn determinant(&self) -> f64 {
         match self.rows {
-            2 => self[(0,0)]*self[(1,1)] - self[(0,1)]*self[(1,0)],
+            2 => self[(0, 0)] * self[(1, 1)] - self[(0, 1)] * self[(1, 0)],
             _ => {
                 let mut sum = 0.0;
 
                 for i in 0..self.cols {
-                    sum += self[(0, i)]*self.cofactor(0, i);
+                    sum += self[(0, i)] * self.cofactor(0, i);
                 }
 
                 sum
-            },
+            }
         }
     }
 
@@ -103,7 +103,7 @@ impl Matrix {
 
     /// Returs the cofactor at given row and column
     pub fn cofactor(&self, row: usize, column: usize) -> f64 {
-        if row + column % 2 == 0 {
+        if (row + column) & 1 == 0 {
             self.minor(row, column)
         } else {
             -self.minor(row, column)
@@ -123,9 +123,9 @@ impl Matrix {
 
         let mut matrix = vec![vec![0.0; self.rows]; self.cols];
 
-        for i in 0..self.rows {
-            for j in 0..self.cols {
-                matrix[j][i] = self.cofactor(i, j) / self.determinant();
+        for row in 0..self.rows {
+            for col in 0..self.cols {
+                matrix[col][row] = self.cofactor(row, col) / self.determinant();
             }
         }
 
@@ -209,6 +209,23 @@ impl From<Vec<f64>> for Matrix {
             cols: vec.len(),
             matrix: vec![vec],
         }
+    }
+}
+
+impl PartialEq for Matrix {
+    fn eq(&self, other: &Matrix) -> bool {
+        for i in 0..self.rows {
+            for j in 0..self.cols {
+                if (self[(i,j)] - other[(i,j)]).abs() < 0.00001 {
+                    continue;
+                } else {
+                    eprintln!("{} - {} = {} < {}", self[(i,j)], other[(i,j)], self[(i,j)] - other[(i,j)], f64::EPSILON);
+                    return false;
+                }
+            }
+        }
+
+        true
     }
 }
 
@@ -361,9 +378,9 @@ mod tests {
         let reference = Matrix::from(reference);
 
         assert_eq!(reference, a.transpose());
-        
+
         let identity = Matrix::new(4, 4);
-        
+
         assert_eq!(identity, identity.transpose());
     }
 
@@ -386,10 +403,10 @@ mod tests {
         let reference = vec![vec![-3.0, 2.0], vec![0.0, 6.0]];
         let reference = Matrix::from(reference);
 
-        assert_eq!(reference, a.submatrix(0,2));
+        assert_eq!(reference, a.submatrix(0, 2));
 
         let a = vec![
-            vec![-6.0, 1.0, 1.0,  6.0],
+            vec![-6.0, 1.0, 1.0, 6.0],
             vec![-8.0, 5.0, 8.0, 6.0],
             vec![-1.0, 0.0, 8.0, 2.0],
             vec![-7.0, 1.0, -1.0, 1.0],
@@ -397,7 +414,7 @@ mod tests {
         let a = Matrix::from(a);
 
         let reference = vec![
-            vec![-6.0, 1.0,  6.0],
+            vec![-6.0, 1.0, 6.0],
             vec![-8.0, 8.0, 6.0],
             vec![-7.0, -1.0, 1.0],
         ];
@@ -409,7 +426,7 @@ mod tests {
     #[test]
     fn minor_should_compute_correctly() {
         let a = vec![
-            vec![3.0, 5.0,  0.0],
+            vec![3.0, 5.0, 0.0],
             vec![2.0, -1.0, -7.0],
             vec![6.0, -1.0, 5.0],
         ];
@@ -421,22 +438,40 @@ mod tests {
     #[test]
     fn cofactor_should_compute_correctly() {
         let a = vec![
-            vec![3.0, 5.0,  0.0],
+            vec![3.0, 5.0, 0.0],
             vec![2.0, -1.0, -7.0],
             vec![6.0, -1.0, 5.0],
         ];
-        let a = Matrix::from(a);    
-        
+        let a = Matrix::from(a);
+
         assert_eq!(-12.0, a.minor(0, 0));
         assert_eq!(-12.0, a.cofactor(0, 0));
         assert_eq!(25.0, a.minor(1, 0));
         assert_eq!(-25.0, a.cofactor(1, 0));
+
+        let a = vec![vec![1.0; 4]; 4];
+        let a = Matrix::from(a);
+        let reference = vec![
+            vec![0.0, -0.0, 0.0, -0.0],
+            vec![-0.0, 0.0, -0.0, 0.0],
+            vec![0.0, -0.0, 0.0, -0.0],
+            vec![-0.0, 0.0, -0.0, 0.0],
+        ];
+        let mut b = vec![vec![0.0; 4]; 4];
+
+        for i in 0..4 {
+            for j in 0..4 {
+                b[i][j] = a.cofactor(i, j);
+            }
+        }
+        
+        assert_eq!(reference, b);
     }
 
     #[test]
     fn should_compute_determinants_of_larger_matrices_correctly() {
         let a = vec![
-            vec![1.0, 2.0,  6.0],
+            vec![1.0, 2.0, 6.0],
             vec![-5.0, 8.0, -4.0],
             vec![2.0, 6.0, 4.0],
         ];
@@ -448,7 +483,7 @@ mod tests {
         assert_eq!(-196.0, a.determinant());
 
         let a = vec![
-            vec![-2.0, -8.0, 3.0,  5.0],
+            vec![-2.0, -8.0, 3.0, 5.0],
             vec![-3.0, 1.0, 7.0, 3.0],
             vec![1.0, 2.0, -9.0, 6.0],
             vec![-6.0, 7.0, 7.0, -9.0],
@@ -508,9 +543,9 @@ mod tests {
 
         assert_eq!(532.0, a.determinant());
         assert_eq!(-160.0, a.cofactor(2, 3));
-        assert_eq!(-160.0/532.0, b[(3,2)]);
+        assert_eq!(-160.0 / 532.0, b[(3, 2)]);
         assert_eq!(105.0, a.cofactor(3, 2));
-        assert_eq!(105.0/532.0, b[(2,3)]);
+        assert_eq!(105.0 / 532.0, b[(2, 3)]);
         assert_eq!(reference, b);
     }
 
@@ -531,8 +566,8 @@ mod tests {
             vec![6.0, -2.0, 0.0, 5.0],
         ];
         let b = Matrix::from(b);
-        let c = a.clone()*b.clone();
+        let c = a.clone() * b.clone();
 
-        assert_eq!(c*(b.inverse()), a);
+        assert_eq!(c * (b.inverse()), a);
     }
 }

@@ -165,9 +165,9 @@ impl Div<f64> for Tuple {
 impl PartialEq for Tuple {
     fn eq(&self, other: &Tuple) -> bool {
         (self.x - other.x).abs() < f64::EPSILON
-            && (self.y - other.y).abs() < f64::EPSILON
-            && (self.z - other.z).abs() < f64::EPSILON
-            && (self.w - other.w).abs() < f64::EPSILON
+            && (self.y - other.y).abs() < f32::EPSILON.into()
+            && (self.z - other.z).abs() < f32::EPSILON.into()
+            && (self.w - other.w).abs() < f32::EPSILON.into()
     }
 }
 
