@@ -37,6 +37,8 @@ impl Matrix {
     /// # Example
     ///
     /// ```
+    /// use libray::math::Matrix;
+    /// 
     /// let a = vec![
     ///     vec![0.0, 9.0, 3.0, 0.0],
     ///     vec![9.0, 8.0, 0.0, 8.0],
