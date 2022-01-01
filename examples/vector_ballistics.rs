@@ -1,4 +1,4 @@
-//! Binary example
+//! Example of vector ballistics
 
 use libray::{graphics, math::Tuple, Environment, Projectile};
 use std::fs;
