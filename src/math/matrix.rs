@@ -141,7 +141,7 @@ impl Matrix {
     /// * `x` - units in x axis
     /// * `y` - units in y axis
     /// * `z` - units in z axis
-    pub fn translate(self, x: f64, y: f64, z: f64) -> Matrix {
+    pub fn translate(&self, x: f64, y: f64, z: f64) -> Matrix {
         let mut m = Matrix::new(4, 4);
 
         m[(0, 3)] = x;
@@ -158,7 +158,7 @@ impl Matrix {
     /// * `x` - scaling in x axis
     /// * `y` - scaling in y axis
     /// * `z` - scaling in z axis
-    pub fn scale(self, x: f64, y: f64, z: f64) -> Matrix {
+    pub fn scale(&self, x: f64, y: f64, z: f64) -> Matrix {
         let mut m = Matrix::new(4, 4);
 
         m[(0, 0)] = x;
@@ -173,7 +173,7 @@ impl Matrix {
     /// # Arguments:
     ///
     /// * `rads` - radians to rotate
-    pub fn rotate_x(self, rads: f64) -> Matrix {
+    pub fn rotate_x(&self, rads: f64) -> Matrix {
         let mut m = Matrix::new(4, 4);
 
         m[(1, 1)] = rads.cos();
@@ -189,7 +189,7 @@ impl Matrix {
     /// # Arguments:
     ///
     /// * `rads` - radians to rotate
-    pub fn rotate_y(self, rads: f64) -> Matrix {
+    pub fn rotate_y(&self, rads: f64) -> Matrix {
         let mut m = Matrix::new(4, 4);
 
         m[(0, 0)] = rads.cos();
@@ -205,7 +205,7 @@ impl Matrix {
     /// # Arguments:
     ///
     /// * `rads` - radians to rotate
-    pub fn rotate_z(self, rads: f64) -> Matrix {
+    pub fn rotate_z(&self, rads: f64) -> Matrix {
         let mut m = Matrix::new(4, 4);
 
         m[(0, 0)] = rads.cos();
@@ -226,7 +226,7 @@ impl Matrix {
     /// * `yz` - y in proportion to z
     /// * `zx` - z in proportion to x
     /// * `zy` - z in proportion to y
-    pub fn skew(self, xy: f64, xz: f64, yx: f64, yz: f64, zx: f64, zy: f64) -> Matrix {
+    pub fn skew(&self, xy: f64, xz: f64, yx: f64, yz: f64, zx: f64, zy: f64) -> Matrix {
         let mut m = Matrix::new(4, 4);
 
         m[(1, 0)] = yx;
@@ -237,6 +237,29 @@ impl Matrix {
         m[(1, 2)] = yz;
 
         m * self
+    }
+}
+
+impl Mul<&Matrix> for &Matrix {
+    type Output = Matrix;
+
+    fn mul(self, rhs: &Matrix) -> Matrix {
+        if self.matrix.len() != 4 && self.matrix[0].len() != 4 {
+            panic!("Incorrect matrix shape");
+        }
+
+        let mut m = Matrix::new(self.matrix.len(), self.matrix[0].len());
+
+        for i in 0..4 {
+            for j in 0..4 {
+                m[(i, j)] = self[(i, 0)] * rhs[(0, j)]
+                    + self[(i, 1)] * rhs[(1, j)]
+                    + self[(i, 2)] * rhs[(2, j)]
+                    + self[(i, 3)] * rhs[(3, j)];
+            }
+        }
+
+        m
     }
 }
 
@@ -260,6 +283,51 @@ impl Mul for Matrix {
         }
 
         m
+    }
+}
+
+impl Mul<&Matrix> for Matrix {
+    type Output = Matrix;
+
+    fn mul(self, rhs: &Matrix) -> Matrix {
+        if self.matrix.len() != 4 && self.matrix[0].len() != 4 {
+            panic!("Incorrect matrix shape");
+        }
+
+        let mut m = Matrix::new(self.matrix.len(), self.matrix[0].len());
+
+        for i in 0..4 {
+            for j in 0..4 {
+                m[(i, j)] = self[(i, 0)] * rhs[(0, j)]
+                    + self[(i, 1)] * rhs[(1, j)]
+                    + self[(i, 2)] * rhs[(2, j)]
+                    + self[(i, 3)] * rhs[(3, j)];
+            }
+        }
+
+        m
+    }
+}
+
+impl Mul<&Tuple> for &Matrix {
+    type Output = Tuple;
+
+    fn mul(self, rhs: &Tuple) -> Tuple {
+        if self.matrix.len() != 4 || self.matrix[0].len() != 4 {
+            panic!("Incorrect matrix shape");
+        }
+
+        let mut v = vec![];
+
+        for i in 0..4 {
+            let mut sum = 0.0;
+            for j in 0..4 {
+                sum += self[(i, j)] * rhs[j];
+            }
+            v.push(sum);
+        }
+
+        Tuple::from(v)
     }
 }
 
