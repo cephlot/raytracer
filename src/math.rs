@@ -4,6 +4,7 @@
 
 mod tuple;
 mod matrix;
+mod transformations;
 
 pub use tuple::Tuple;
 pub use matrix::Matrix;
