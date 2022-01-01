@@ -15,8 +15,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             .translate(50.0, 50.0, 0.0);
         let point = transform * Tuple::point(0.0, 0.1, 0.0);
         canvas.write_pixel(
-            (point.x).ceil() as usize,
-            ((point.y).ceil() as usize) - 1,
+            (point.x).ceil() as usize - 1,
+            (point.y).ceil() as usize - 1,
             white,
         );
     }
