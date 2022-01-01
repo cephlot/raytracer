@@ -12,13 +12,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         gravity: Tuple::vector(0.0, -0.1, 0.0),
         wind: Tuple::vector(-0.01, 0.0, 0.0),
     };
-    let mut i = 0;
     let mut c = graphics::Canvas::new(900, 550);
     let red = graphics::Color::new(1.0, 0.0, 0.0);
 
     while p.position.y > 0.0 {
         p = e.tick(p);
-        i += 1;
         c.write_pixel(
             ((p.position.x).ceil() as usize) - 1,
             (550 - ((p.position.y).ceil() as usize)) - 1,
