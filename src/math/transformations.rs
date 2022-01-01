@@ -36,6 +36,54 @@ pub fn scaling(x: f64, y: f64, z: f64) -> Matrix {
     m
 }
 
+/// Returns a rotation matrix around the x axis
+///
+/// # Arguments:
+///
+/// * `rads` - radians to rotate
+pub fn rotation_x(rads: f64) -> Matrix {
+    let mut m = Matrix::new(4, 4);
+
+    m[(1, 1)] = rads.cos();
+    m[(2, 1)] = rads.sin();
+    m[(1, 2)] = -rads.sin();
+    m[(2, 2)] = rads.cos();
+
+    m
+}
+
+/// Returns a rotation matrix around the y axis
+///
+/// # Arguments:
+///
+/// * `rads` - radians to rotate
+pub fn rotation_y(rads: f64) -> Matrix {
+    let mut m = Matrix::new(4, 4);
+
+    m[(0, 0)] = rads.cos();
+    m[(2, 0)] = -rads.sin();
+    m[(0, 2)] = rads.sin();
+    m[(2, 2)] = rads.cos();
+
+    m
+}
+
+/// Returns a rotation matrix around the z axis
+///
+/// # Arguments:
+///
+/// * `rads` - radians to rotate
+pub fn rotation_z(rads: f64) -> Matrix {
+    let mut m = Matrix::new(4, 4);
+
+    m[(0, 0)] = rads.cos();
+    m[(1, 0)] = rads.sin();
+    m[(0, 1)] = -rads.sin();
+    m[(1, 1)] = rads.cos();
+
+    m
+}
+
 #[cfg(test)]
 mod tests {
     use super::super::tuple::Tuple;
@@ -95,5 +143,55 @@ mod tests {
         let v = Tuple::vector(2.0, 3.0, 4.0);
 
         assert_eq!(transform.inverse() * v, Tuple::vector(-2.0, 3.0, 4.0));
+    }
+
+    #[test]
+    fn should_rotate_correctly_around_x_axis() {
+        let p = Tuple::point(0.0, 1.0, 0.0);
+        let a = rotation_x(std::f64::consts::PI / 4.0);
+        let b = rotation_x(std::f64::consts::PI / 2.0);
+
+        assert_eq!(
+            a * p,
+            Tuple::point(0.0, 2.0_f64.sqrt() / 2.0, 2.0_f64.sqrt() / 2.0)
+        );
+        assert_eq!(b * p, Tuple::point(0.0, 0.0, 1.0));
+    }
+
+    #[test]
+    fn inverse_of_rotation_should_rotate_in_opposite_direction() {
+        let p = Tuple::point(0.0, 1.0, 0.0);
+        let a = rotation_x(std::f64::consts::PI / 4.0);
+
+        assert_eq!(
+            a.inverse() * p,
+            Tuple::point(0.0, 2.0_f64.sqrt() / 2.0, -2.0_f64.sqrt() / 2.0)
+        );
+    }
+
+    #[test]
+    fn should_rotate_correctly_around_y_axis() {
+        let p = Tuple::point(0.0, 0.0, 1.0);
+        let a = rotation_y(std::f64::consts::PI / 4.0);
+        let b = rotation_y(std::f64::consts::PI / 2.0);
+
+        assert_eq!(
+            a * p,
+            Tuple::point(2.0_f64.sqrt() / 2.0, 0.0, 2.0_f64.sqrt() / 2.0)
+        );
+        assert_eq!(b * p, Tuple::point(1.0, 0.0, 0.0));
+    }
+
+    #[test]
+    fn should_rotate_correctly_around_z_axis() {
+        let p = Tuple::point(0.0, 1.0, 0.0);
+        let a = rotation_z(std::f64::consts::PI / 4.0);
+        let b = rotation_z(std::f64::consts::PI / 2.0);
+
+        assert_eq!(
+            a * p,
+            Tuple::point(-2.0_f64.sqrt() / 2.0, 2.0_f64.sqrt() / 2.0, 0.0)
+        );
+        assert_eq!(b * p, Tuple::point(-1.0, 0.0, 0.0));
     }
 }
