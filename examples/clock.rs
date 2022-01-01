@@ -1,7 +1,7 @@
 //! Example of a clock
 
 use libray::graphics::{Canvas, Color};
-use libray::math::{rotation_z, Tuple};
+use libray::math::{Matrix, Tuple};
 
 use std::fs;
 
@@ -10,13 +10,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let white = Color::new(1.0, 1.0, 1.0);
 
     for i in 0..=11 {
-        let transform = rotation_z(i as f64 * std::f64::consts::PI / 6.0)
-            .scale(400.0, 400.0, 0.0)
-            .translate(50.0, 50.0, 0.0);
-        let point = transform * Tuple::point(0.0, 0.1, 0.0);
+        let transform = Matrix::new(4, 4)
+            .scale(35.0, 35.0, 1.0)
+            .rotate_z(i as f64 * std::f64::consts::PI / 6.0);
+        let point = transform * Tuple::point(0.0, 1.0, 0.0);
+        eprintln!("{:?}", point);
         canvas.write_pixel(
-            (point.x).ceil() as usize - 1,
-            (point.y).ceil() as usize - 1,
+            (point.x + 50.0) as usize - 1,
+            (point.y + 50.0) as usize - 1,
             white,
         );
     }
