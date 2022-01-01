@@ -84,6 +84,20 @@ pub fn rotation_z(rads: f64) -> Matrix {
     m
 }
 
+///
+pub fn skewing(xy: f64, xz: f64, yx: f64, yz: f64, zx: f64, zy: f64) -> Matrix {
+    let mut m = Matrix::new(4, 4);
+
+    m[(1,0)] = yx;
+    m[(2,0)] = zx;
+    m[(0,1)] = xy;
+    m[(2,1)] = zy;
+    m[(0,2)] = xz;
+    m[(1,2)] = yz;
+    
+    m
+}
+
 #[cfg(test)]
 mod tests {
     use super::super::tuple::Tuple;
@@ -193,5 +207,38 @@ mod tests {
             Tuple::point(-2.0_f64.sqrt() / 2.0, 2.0_f64.sqrt() / 2.0, 0.0)
         );
         assert_eq!(b * p, Tuple::point(-1.0, 0.0, 0.0));
+    }
+
+    #[test]
+    fn skewing_should_transform_correctly() {
+        let transform = skewing(1.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+        let p = Tuple::point(2.0, 3.0, 4.0);
+        
+        assert_eq!(transform*p, Tuple::point(5.0, 3.0, 4.0));
+
+        let transform = skewing(0.0, 1.0, 0.0, 0.0, 0.0, 0.0);
+        let p = Tuple::point(2.0, 3.0, 4.0);
+        
+        assert_eq!(transform*p, Tuple::point(6.0, 3.0, 4.0));
+
+        let transform = skewing(0.0, 0.0, 1.0, 0.0, 0.0, 0.0);
+        let p = Tuple::point(2.0, 3.0, 4.0);
+        
+        assert_eq!(transform*p, Tuple::point(2.0, 5.0, 4.0));
+
+        let transform = skewing(0.0, 0.0, 0.0, 1.0, 0.0, 0.0);
+        let p = Tuple::point(2.0, 3.0, 4.0);
+        
+        assert_eq!(transform*p, Tuple::point(2.0, 7.0, 4.0));
+
+        let transform = skewing(0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+        let p = Tuple::point(2.0, 3.0, 4.0);
+        
+        assert_eq!(transform*p, Tuple::point(2.0, 3.0, 6.0));
+
+        let transform = skewing(0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
+        let p = Tuple::point(2.0, 3.0, 4.0);
+        
+        assert_eq!(transform*p, Tuple::point(2.0, 3.0, 7.0));
     }
 }

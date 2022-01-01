@@ -2,9 +2,10 @@
 //!
 //! Contains fundamental math type and methods.
 
-mod tuple;
 mod matrix;
 mod transformations;
+mod tuple;
 
-pub use tuple::Tuple;
 pub use matrix::Matrix;
+pub use transformations::*;
+pub use tuple::Tuple;

@@ -38,7 +38,7 @@ impl Matrix {
     ///
     /// ```
     /// use libray::math::Matrix;
-    /// 
+    ///
     /// let a = vec![
     ///     vec![0.0, 9.0, 3.0, 0.0],
     ///     vec![9.0, 8.0, 0.0, 8.0],
@@ -218,10 +218,16 @@ impl PartialEq for Matrix {
     fn eq(&self, other: &Matrix) -> bool {
         for i in 0..self.rows {
             for j in 0..self.cols {
-                if (self[(i,j)] - other[(i,j)]).abs() < 0.00001 {
+                if (self[(i, j)] - other[(i, j)]).abs() < 0.00001 {
                     continue;
                 } else {
-                    eprintln!("{} - {} = {} < {}", self[(i,j)], other[(i,j)], self[(i,j)] - other[(i,j)], f64::EPSILON);
+                    eprintln!(
+                        "{} - {} = {} < {}",
+                        self[(i, j)],
+                        other[(i, j)],
+                        self[(i, j)] - other[(i, j)],
+                        f64::EPSILON
+                    );
                     return false;
                 }
             }
@@ -466,7 +472,7 @@ mod tests {
                 b[i][j] = a.cofactor(i, j);
             }
         }
-        
+
         assert_eq!(reference, b);
     }
 
