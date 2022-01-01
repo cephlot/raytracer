@@ -14,7 +14,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             .scale(35.0, 35.0, 1.0)
             .rotate_z(i as f64 * std::f64::consts::PI / 6.0);
         let point = transform * Tuple::point(0.0, 1.0, 0.0);
-        eprintln!("{:?}", point);
         canvas.write_pixel(
             (point.x + 50.0) as usize - 1,
             (point.y + 50.0) as usize - 1,

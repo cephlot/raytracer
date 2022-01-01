@@ -19,7 +19,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     while p.position.y > 0.0 {
         p = e.tick(p);
         i += 1;
-        println!("{}: {:?}", i, p.position);
         c.write_pixel(
             ((p.position.x).ceil() as usize) - 1,
             (550 - ((p.position.y).ceil() as usize)) - 1,
