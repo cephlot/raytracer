@@ -11,7 +11,3 @@ license = "MIT"
 [lib]
 name = "libray"
 path = "src/lib.rs"
-
-[[bin]]
-name = "raytracer"
-path = "src/bin/bin.rs"
