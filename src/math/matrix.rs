@@ -133,6 +133,111 @@ impl Matrix {
 
         Matrix::from(matrix)
     }
+
+    /// Returns a translation matrix with the given translation units
+    ///
+    /// # Arguments:
+    ///
+    /// * `x` - units in x axis
+    /// * `y` - units in y axis
+    /// * `z` - units in z axis
+    pub fn translate(self, x: f64, y: f64, z: f64) -> Matrix {
+        let mut m = Matrix::new(4, 4);
+
+        m[(0, 3)] = x;
+        m[(1, 3)] = y;
+        m[(2, 3)] = z;
+
+        m * self
+    }
+
+    /// Returns a scling matrix with the given scale units
+    ///
+    /// # Arguments:
+    ///
+    /// * `x` - scaling in x axis
+    /// * `y` - scaling in y axis
+    /// * `z` - scaling in z axis
+    pub fn scale(self, x: f64, y: f64, z: f64) -> Matrix {
+        let mut m = Matrix::new(4, 4);
+
+        m[(0, 0)] = x;
+        m[(1, 1)] = y;
+        m[(2, 2)] = z;
+
+        m * self
+    }
+
+    /// Returns a rotation matrix around the x axis
+    ///
+    /// # Arguments:
+    ///
+    /// * `rads` - radians to rotate
+    pub fn rotate_x(self, rads: f64) -> Matrix {
+        let mut m = Matrix::new(4, 4);
+
+        m[(1, 1)] = rads.cos();
+        m[(2, 1)] = rads.sin();
+        m[(1, 2)] = -rads.sin();
+        m[(2, 2)] = rads.cos();
+
+        m * self
+    }
+
+    /// Returns a rotation matrix around the y axis
+    ///
+    /// # Arguments:
+    ///
+    /// * `rads` - radians to rotate
+    pub fn rotate_y(self, rads: f64) -> Matrix {
+        let mut m = Matrix::new(4, 4);
+
+        m[(0, 0)] = rads.cos();
+        m[(2, 0)] = -rads.sin();
+        m[(0, 2)] = rads.sin();
+        m[(2, 2)] = rads.cos();
+
+        m * self
+    }
+
+    /// Returns a rotation matrix around the z axis
+    ///
+    /// # Arguments:
+    ///
+    /// * `rads` - radians to rotate
+    pub fn rotate_z(self, rads: f64) -> Matrix {
+        let mut m = Matrix::new(4, 4);
+
+        m[(0, 0)] = rads.cos();
+        m[(1, 0)] = rads.sin();
+        m[(0, 1)] = -rads.sin();
+        m[(1, 1)] = rads.cos();
+
+        m * self
+    }
+
+    /// Skews the matrix
+    ///
+    /// # Arguments:
+    ///
+    /// * `xy` - x in proportion to y
+    /// * `xz` - x in proportion to z
+    /// * `yx` - y in proportion to x
+    /// * `yz` - y in proportion to z
+    /// * `zx` - z in proportion to x
+    /// * `zy` - z in proportion to y
+    pub fn skew(self, xy: f64, xz: f64, yx: f64, yz: f64, zx: f64, zy: f64) -> Matrix {
+        let mut m = Matrix::new(4, 4);
+
+        m[(1, 0)] = yx;
+        m[(2, 0)] = zx;
+        m[(0, 1)] = xy;
+        m[(2, 1)] = zy;
+        m[(0, 2)] = xz;
+        m[(1, 2)] = yz;
+
+        m * self
+    }
 }
 
 impl Mul for Matrix {

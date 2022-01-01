@@ -84,7 +84,16 @@ pub fn rotation_z(rads: f64) -> Matrix {
     m
 }
 
+/// Returns a skewing matrix
 ///
+/// # Arguments:
+///
+/// * `xy` - x in proportion to y
+/// * `xz` - x in proportion to z
+/// * `yx` - y in proportion to x
+/// * `yz` - y in proportion to z
+/// * `zx` - z in proportion to x
+/// * `zy` - z in proportion to y
 pub fn skewing(xy: f64, xz: f64, yx: f64, yz: f64, zx: f64, zy: f64) -> Matrix {
     let mut m = Matrix::new(4, 4);
 
