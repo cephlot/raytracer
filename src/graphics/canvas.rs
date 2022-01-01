@@ -37,7 +37,7 @@ impl Canvas {
     /// ```
     /// // You can use this function to write the encoded string to a file
     /// use libray::graphics::Canvas;
-    /// 
+    ///
     /// let mut c = Canvas::new(900, 550);
     /// std::fs::write("ballistics.ppm", c.to_ppm());
     /// ```
