@@ -1,4 +1,4 @@
-//! Example of a clock
+//! Example of a red sphere on a black canvas
 
 use libray::graphics::{Canvas, Color};
 use libray::math::{Intersection, Ray, Sphere, Tuple};
