@@ -5,6 +5,7 @@
 mod matrix;
 mod transformations;
 mod tuple;
+mod ray;
 
 pub use matrix::Matrix;
 pub use transformations::*;
