@@ -13,7 +13,7 @@ pub struct Matrix {
     cols: usize,
     /// Internal matrix representation
     matrix: Vec<Vec<f64>>,
-    _private: ()
+    _private: (),
 }
 
 impl Matrix {
@@ -30,7 +30,12 @@ impl Matrix {
             matrix[i][i] = 1.0;
         }
 
-        Matrix { rows, cols, matrix, _private: () }
+        Matrix {
+            rows,
+            cols,
+            matrix,
+            _private: (),
+        }
     }
 
     /// Transposes Matrix and returns a new Matrix
