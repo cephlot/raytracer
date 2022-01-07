@@ -15,6 +15,7 @@ pub struct Tuple {
     /// w-value of the tuple. A non-zero value indicates a point, otherwise a
     /// vector
     pub w: f64,
+    _private: (),
 }
 
 impl Tuple {
@@ -27,7 +28,13 @@ impl Tuple {
     /// * `z` - z value of tuple
     /// * `w` - w value of tuple
     pub fn new(x: f64, y: f64, z: f64, w: f64) -> Tuple {
-        Tuple { x, y, z, w }
+        Tuple {
+            x,
+            y,
+            z,
+            w,
+            _private: (),
+        }
     }
 
     /// Creates a new point Tuple where `w` is `1.0`
@@ -38,7 +45,13 @@ impl Tuple {
     /// * `y` - y value of point
     /// * `z` - z value of point
     pub fn point(x: f64, y: f64, z: f64) -> Tuple {
-        Tuple { x, y, z, w: 1.0 }
+        Tuple {
+            x,
+            y,
+            z,
+            w: 1.0,
+            _private: (),
+        }
     }
 
     /// Creates a new vector Tuple where `w` is `0.0`
@@ -49,7 +62,13 @@ impl Tuple {
     /// * `y` - y value of point
     /// * `z` - z value of point
     pub fn vector(x: f64, y: f64, z: f64) -> Tuple {
-        Tuple { x, y, z, w: 0.0 }
+        Tuple {
+            x,
+            y,
+            z,
+            w: 0.0,
+            _private: (),
+        }
     }
 
     /// Determines if given Tuple is a vector
@@ -191,12 +210,7 @@ impl From<Vec<f64>> for Tuple {
             panic!("Incorrect vector length")
         }
 
-        Tuple {
-            x: vec[0],
-            y: vec[1],
-            z: vec[2],
-            w: vec[3],
-        }
+        Tuple::new(vec[0], vec[1], vec[2], vec[3])
     }
 }
 
@@ -206,12 +220,7 @@ mod tests {
 
     #[test]
     fn should_return_correct_type() {
-        let mut t: Tuple = Tuple {
-            x: 4.3,
-            y: -4.2,
-            z: 3.1,
-            w: 1.0,
-        };
+        let mut t: Tuple = Tuple::new(4.3, -4.2, 3.1, 1.0);
         assert_eq!(4.3, t.x);
         assert_eq!(-4.2, t.y);
         assert_eq!(3.1, t.z);
@@ -219,12 +228,7 @@ mod tests {
         assert_eq!(true, t.is_point());
         assert_eq!(false, t.is_vector());
 
-        t = Tuple {
-            x: 4.3,
-            y: -4.2,
-            z: 3.1,
-            w: 0.0,
-        };
+        t = Tuple::new(4.3, -4.2, 3.1, 0.0);
         assert_eq!(4.3, t.x);
         assert_eq!(-4.2, t.y);
         assert_eq!(3.1, t.z);
@@ -235,12 +239,7 @@ mod tests {
 
     #[test]
     fn should_create_correct_types() {
-        let mut reference = Tuple {
-            x: 4.0,
-            y: -4.0,
-            z: 3.0,
-            w: 1.0,
-        };
+        let mut reference = Tuple::new(4.0, -4.0, 3.0, 1.0);
         let mut t = Tuple::point(4.0, -4.0, 3.0);
         assert_eq!(true, t.is_point());
         assert_eq!(reference, t);
@@ -253,24 +252,9 @@ mod tests {
 
     #[test]
     fn should_add_components_correctly() {
-        let a = Tuple {
-            x: 3.0,
-            y: -2.0,
-            z: 5.0,
-            w: 1.0,
-        };
-        let b = Tuple {
-            x: -2.0,
-            y: 3.0,
-            z: 1.0,
-            w: 0.0,
-        };
-        let reference = Tuple {
-            x: 1.0,
-            y: 1.0,
-            z: 6.0,
-            w: 1.0,
-        };
+        let a = Tuple::new(3.0, -2.0, 5.0, 1.0);
+        let b = Tuple::new(-2.0, 3.0, 1.0, 0.0);
+        let reference = Tuple::new(1.0, 1.0, 6.0, 1.0);
 
         assert_eq!(a + b, reference);
     }
@@ -313,72 +297,32 @@ mod tests {
 
     #[test]
     fn should_negate_tuple_properly() {
-        let a = Tuple {
-            x: 1.0,
-            y: -2.0,
-            z: 3.0,
-            w: -4.0,
-        };
-        let reference = Tuple {
-            x: -1.0,
-            y: 2.0,
-            z: -3.0,
-            w: 4.0,
-        };
+        let a = Tuple::new(1.0, -2.0, 3.0, -4.0);
+        let reference = Tuple::new(-1.0, 2.0, -3.0, 4.0);
 
         assert_eq!(-a, reference);
     }
 
     #[test]
     fn should_multiply_by_scalar_correctly() {
-        let a = Tuple {
-            x: 1.0,
-            y: -2.0,
-            z: 3.0,
-            w: -4.0,
-        };
-        let reference = Tuple {
-            x: 3.5,
-            y: -7.0,
-            z: 10.5,
-            w: -14.0,
-        };
+        let a = Tuple::new(1.0, -2.0, 3.0, -4.0);
+        let reference = Tuple::new(3.5, -7.0, 10.5, -14.0);
 
         assert_eq!(a * 3.5, reference);
     }
 
     #[test]
     fn should_multiply_by_fraction_correctly() {
-        let a = Tuple {
-            x: 1.0,
-            y: -2.0,
-            z: 3.0,
-            w: -4.0,
-        };
-        let reference = Tuple {
-            x: 0.5,
-            y: -1.0,
-            z: 1.5,
-            w: -2.0,
-        };
+        let a = Tuple::new(1.0, -2.0, 3.0, -4.0);
+        let reference = Tuple::new(0.5, -1.0, 1.5, -2.0);
 
         assert_eq!(a * 0.5, reference);
     }
 
     #[test]
     fn should_divide_by_fraction_correctly() {
-        let a = Tuple {
-            x: 1.0,
-            y: -2.0,
-            z: 3.0,
-            w: -4.0,
-        };
-        let reference = Tuple {
-            x: 0.5,
-            y: -1.0,
-            z: 1.5,
-            w: -2.0,
-        };
+        let a = Tuple::new(1.0, -2.0, 3.0, -4.0);
+        let reference = Tuple::new(0.5, -1.0, 1.5, -2.0);
 
         assert_eq!(a / 2.0, reference);
     }
