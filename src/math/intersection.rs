@@ -18,7 +18,7 @@ pub struct Sphere {
     /// Radius of the sphere
     radius: f64,
     /// Transformation matrix of the Sphere
-    transform: Matrix,
+    pub transform: Matrix,
 }
 
 /// Aggregation of time and object that was intersected

@@ -6,6 +6,7 @@ mod intersection;
 mod matrix;
 mod transformations;
 mod tuple;
+mod vectors;
 
 pub use intersection::{Intersection, Ray, Sphere};
 pub use matrix::Matrix;
