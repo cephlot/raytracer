@@ -2,6 +2,8 @@ use crate::math::Tuple;
 use std::convert::From;
 use std::ops::{Index, IndexMut, Mul};
 
+const EPSILON: f64 = 0.00001;
+
 /// Matrix representation
 ///
 /// This struct can be multiplied
@@ -154,7 +156,7 @@ impl Matrix {
         m[(1, 3)] = y;
         m[(2, 3)] = z;
 
-        m * self
+        self * m
     }
 
     /// Returns a scling matrix with the given scale units
@@ -171,7 +173,7 @@ impl Matrix {
         m[(1, 1)] = y;
         m[(2, 2)] = z;
 
-        m * self
+        self * m
     }
 
     /// Returns a rotation matrix around the x axis
@@ -187,7 +189,7 @@ impl Matrix {
         m[(1, 2)] = -rads.sin();
         m[(2, 2)] = rads.cos();
 
-        m * self
+        self * m
     }
 
     /// Returns a rotation matrix around the y axis
@@ -203,7 +205,7 @@ impl Matrix {
         m[(0, 2)] = rads.sin();
         m[(2, 2)] = rads.cos();
 
-        m * self
+        self * m
     }
 
     /// Returns a rotation matrix around the z axis
@@ -219,7 +221,7 @@ impl Matrix {
         m[(0, 1)] = -rads.sin();
         m[(1, 1)] = rads.cos();
 
-        m * self
+        self * m
     }
 
     /// Skews the matrix
@@ -242,7 +244,7 @@ impl Matrix {
         m[(0, 2)] = xz;
         m[(1, 2)] = yz;
 
-        m * self
+        self * m
     }
 }
 
@@ -292,10 +294,10 @@ impl Mul for Matrix {
     }
 }
 
-impl Mul<&Matrix> for Matrix {
+impl Mul<Matrix> for &Matrix {
     type Output = Matrix;
 
-    fn mul(self, rhs: &Matrix) -> Matrix {
+    fn mul(self, rhs: Matrix) -> Matrix {
         if self.matrix.len() != 4 && self.matrix[0].len() != 4 {
             panic!("Incorrect matrix shape");
         }
@@ -399,7 +401,7 @@ impl PartialEq for Matrix {
     fn eq(&self, other: &Matrix) -> bool {
         for i in 0..self.rows {
             for j in 0..self.cols {
-                if (self[(i, j)] - other[(i, j)]).abs() < 0.00001 {
+                if (self[(i, j)] - other[(i, j)]).abs() < EPSILON {
                     continue;
                 } else {
                     eprintln!(

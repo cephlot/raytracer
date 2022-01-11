@@ -1,5 +1,6 @@
 use super::Matrix;
 use super::Tuple;
+use crate::graphics::Material;
 
 /// Represents an individual ray
 #[derive(Debug, PartialEq, Clone, Copy)]
@@ -7,27 +8,29 @@ pub struct Ray {
     /// Point of origin of the ray
     origin: Tuple,
     /// Direction vector of the ray
-    direction: Tuple,
-}
+    pub direction: Tuple,
 
 /// Represents a sphere object
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Sphere {
     /// Origin point of the sphere
     origin: Tuple,
     /// Radius of the sphere
     radius: f64,
     /// Transformation matrix of the Sphere
-    transform: Matrix,
+    pub transform: Matrix,
+    /// Material of the sphere
+    pub material: Material,
 }
 
 /// Aggregation of time and object that was intersected
 #[derive(Debug, PartialEq, Clone)]
 pub struct Intersection<'a> {
     /// Time where an object was
-    t: f64,
+    pub t: f64,
     /// Reference to intersected object
-    sphere: &'a Sphere,
+    pub sphere: &'a Sphere,
+    _private: ()
 }
 
 impl Ray {
@@ -98,6 +101,7 @@ impl Sphere {
             origin: Tuple::point(0.0, 0.0, 0.0),
             radius: 1.0,
             transform: Matrix::new(4, 4),
+            material: Material::new(),
         }
     }
 
@@ -118,7 +122,7 @@ impl<'a> Intersection<'a> {
     ///
     /// * `sphere` - reference to intersected object
     pub fn new(t: f64, sphere: &'a Sphere) -> Intersection {
-        Intersection { t, sphere }
+        Intersection { t, sphere, _private: ()}
     }
 
     /// Returns the first nonnegative intersection as a hit
@@ -168,6 +172,16 @@ mod tests {
 
         assert_eq!(ray.origin, origin);
         assert_eq!(ray.direction, direction);
+    }
+
+    #[test]
+    fn should_create_sphere_correctly() {
+        let s = Sphere::new();
+
+        assert_eq!(Tuple::point(0.0, 0.0, 0.0), s.origin);
+        assert_eq!(1.0, s.radius);
+        assert_eq!(Matrix::new(4, 4), s.transform);
+        assert_eq!(Material::new(), s.material);
     }
 
     #[test]

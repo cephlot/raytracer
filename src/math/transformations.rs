@@ -118,6 +118,10 @@ mod tests {
         let p = Tuple::point(-3.0, 4.0, 5.0);
 
         assert_eq!(transform * p, Tuple::point(2.0, 1.0, 7.0));
+        assert_eq!(
+            Matrix::new(4, 4).translate(5.0, -3.0, 2.0) * p,
+            Tuple::point(2.0, 1.0, 7.0)
+        );
     }
 
     #[test]
@@ -126,6 +130,10 @@ mod tests {
         let p = Tuple::point(-3.0, 4.0, 5.0);
 
         assert_eq!(transform.inverse() * p, Tuple::point(-8.0, 7.0, 3.0));
+        assert_eq!(
+            Matrix::new(4, 4).translate(5.0, -3.0, 2.0).inverse() * p,
+            Tuple::point(-8.0, 7.0, 3.0)
+        );
     }
 
     #[test]
@@ -134,6 +142,10 @@ mod tests {
         let p = Tuple::vector(-3.0, 4.0, 5.0);
 
         assert_eq!(transform * p, Tuple::vector(-3.0, 4.0, 5.0));
+        assert_eq!(
+            Matrix::new(4, 4).translate(5.0, -3.0, 2.0) * p,
+            Tuple::vector(-3.0, 4.0, 5.0)
+        );
     }
 
     #[test]
@@ -142,6 +154,10 @@ mod tests {
         let p = Tuple::point(-4.0, 6.0, 8.0);
 
         assert_eq!(transform * p, Tuple::point(-8.0, 18.0, 32.0));
+        assert_eq!(
+            Matrix::new(4, 4).scale(2.0, 3.0, 4.0) * p,
+            Tuple::point(-8.0, 18.0, 32.0)
+        );
     }
 
     #[test]
@@ -150,6 +166,10 @@ mod tests {
         let v = Tuple::vector(-4.0, 6.0, 8.0);
 
         assert_eq!(transform * v, Tuple::vector(-8.0, 18.0, 32.0));
+        assert_eq!(
+            Matrix::new(4, 4).scale(2.0, 3.0, 4.0) * v,
+            Tuple::vector(-8.0, 18.0, 32.0)
+        );
     }
 
     #[test]
@@ -158,6 +178,10 @@ mod tests {
         let v = Tuple::vector(-4.0, 6.0, 8.0);
 
         assert_eq!(transform.inverse() * v, Tuple::vector(-2.0, 2.0, 2.0));
+        assert_eq!(
+            Matrix::new(4, 4).scale(2.0, 3.0, 4.0).inverse() * v,
+            Tuple::vector(-2.0, 2.0, 2.0)
+        );
     }
 
     #[test]
@@ -166,6 +190,10 @@ mod tests {
         let v = Tuple::vector(2.0, 3.0, 4.0);
 
         assert_eq!(transform.inverse() * v, Tuple::vector(-2.0, 3.0, 4.0));
+        assert_eq!(
+            Matrix::new(4, 4).scale(-1.0, 1.0, 1.0).inverse() * v,
+            Tuple::vector(-2.0, 3.0, 4.0)
+        );
     }
 
     #[test]
@@ -179,6 +207,15 @@ mod tests {
             Tuple::point(0.0, 2.0_f64.sqrt() / 2.0, 2.0_f64.sqrt() / 2.0)
         );
         assert_eq!(b * p, Tuple::point(0.0, 0.0, 1.0));
+
+        assert_eq!(
+            Matrix::new(4, 4).rotate_x(std::f64::consts::PI / 4.0) * p,
+            Tuple::point(0.0, 2.0_f64.sqrt() / 2.0, 2.0_f64.sqrt() / 2.0)
+        );
+        assert_eq!(
+            Matrix::new(4, 4).rotate_x(std::f64::consts::PI / 2.0) * p,
+            Tuple::point(0.0, 0.0, 1.0)
+        );
     }
 
     #[test]
@@ -188,6 +225,14 @@ mod tests {
 
         assert_eq!(
             a.inverse() * p,
+            Tuple::point(0.0, 2.0_f64.sqrt() / 2.0, -2.0_f64.sqrt() / 2.0)
+        );
+
+        assert_eq!(
+            Matrix::new(4, 4)
+                .rotate_x(std::f64::consts::PI / 4.0)
+                .inverse()
+                * p,
             Tuple::point(0.0, 2.0_f64.sqrt() / 2.0, -2.0_f64.sqrt() / 2.0)
         );
     }
@@ -203,6 +248,15 @@ mod tests {
             Tuple::point(2.0_f64.sqrt() / 2.0, 0.0, 2.0_f64.sqrt() / 2.0)
         );
         assert_eq!(b * p, Tuple::point(1.0, 0.0, 0.0));
+
+        assert_eq!(
+            Matrix::new(4, 4).rotate_y(std::f64::consts::PI / 4.0) * p,
+            Tuple::point(2.0_f64.sqrt() / 2.0, 0.0, 2.0_f64.sqrt() / 2.0)
+        );
+        assert_eq!(
+            Matrix::new(4, 4).rotate_y(std::f64::consts::PI / 2.0) * p,
+            Tuple::point(1.0, 0.0, 0.0)
+        );
     }
 
     #[test]
@@ -216,6 +270,15 @@ mod tests {
             Tuple::point(-2.0_f64.sqrt() / 2.0, 2.0_f64.sqrt() / 2.0, 0.0)
         );
         assert_eq!(b * p, Tuple::point(-1.0, 0.0, 0.0));
+
+        assert_eq!(
+            Matrix::new(4, 4).rotate_z(std::f64::consts::PI / 4.0) * p,
+            Tuple::point(-2.0_f64.sqrt() / 2.0, 2.0_f64.sqrt() / 2.0, 0.0)
+        );
+        assert_eq!(
+            Matrix::new(4, 4).rotate_z(std::f64::consts::PI / 2.0) * p,
+            Tuple::point(-1.0, 0.0, 0.0)
+        );
     }
 
     #[test]
@@ -224,30 +287,54 @@ mod tests {
         let p = Tuple::point(2.0, 3.0, 4.0);
 
         assert_eq!(transform * p, Tuple::point(5.0, 3.0, 4.0));
+        assert_eq!(
+            Matrix::new(4, 4).skew(1.0, 0.0, 0.0, 0.0, 0.0, 0.0) * p,
+            Tuple::point(5.0, 3.0, 4.0)
+        );
 
         let transform = skewing(0.0, 1.0, 0.0, 0.0, 0.0, 0.0);
         let p = Tuple::point(2.0, 3.0, 4.0);
 
         assert_eq!(transform * p, Tuple::point(6.0, 3.0, 4.0));
+        assert_eq!(
+            Matrix::new(4, 4).skew(0.0, 1.0, 0.0, 0.0, 0.0, 0.0) * p,
+            Tuple::point(6.0, 3.0, 4.0)
+        );
 
         let transform = skewing(0.0, 0.0, 1.0, 0.0, 0.0, 0.0);
         let p = Tuple::point(2.0, 3.0, 4.0);
 
         assert_eq!(transform * p, Tuple::point(2.0, 5.0, 4.0));
+        assert_eq!(
+            Matrix::new(4, 4).skew(0.0, 0.0, 1.0, 0.0, 0.0, 0.0) * p,
+            Tuple::point(2.0, 5.0, 4.0)
+        );
 
         let transform = skewing(0.0, 0.0, 0.0, 1.0, 0.0, 0.0);
         let p = Tuple::point(2.0, 3.0, 4.0);
 
         assert_eq!(transform * p, Tuple::point(2.0, 7.0, 4.0));
+        assert_eq!(
+            Matrix::new(4, 4).skew(0.0, 0.0, 0.0, 1.0, 0.0, 0.0) * p,
+            Tuple::point(2.0, 7.0, 4.0)
+        );
 
         let transform = skewing(0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
         let p = Tuple::point(2.0, 3.0, 4.0);
 
         assert_eq!(transform * p, Tuple::point(2.0, 3.0, 6.0));
+        assert_eq!(
+            Matrix::new(4, 4).skew(0.0, 0.0, 0.0, 0.0, 1.0, 0.0) * p,
+            Tuple::point(2.0, 3.0, 6.0)
+        );
 
         let transform = skewing(0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
         let p = Tuple::point(2.0, 3.0, 4.0);
 
         assert_eq!(transform * p, Tuple::point(2.0, 3.0, 7.0));
+        assert_eq!(
+            Matrix::new(4, 4).skew(0.0, 0.0, 0.0, 0.0, 0.0, 1.0) * p,
+            Tuple::point(2.0, 3.0, 7.0)
+        );
     }
 }
