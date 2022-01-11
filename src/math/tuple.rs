@@ -3,6 +3,8 @@
 use std::convert::From;
 use std::ops::{Add, Div, Index, Mul, Neg, Sub};
 
+const EPSILON: f64 = 0.00001;
+
 /// 3 Dimensional Tuple struct representing points or vectors.
 #[derive(PartialOrd, Debug, Clone, Copy)]
 pub struct Tuple {
@@ -183,10 +185,10 @@ impl Div<f64> for Tuple {
 
 impl PartialEq for Tuple {
     fn eq(&self, other: &Tuple) -> bool {
-        (self.x - other.x).abs() < f64::EPSILON
-            && (self.y - other.y).abs() < f32::EPSILON.into()
-            && (self.z - other.z).abs() < f32::EPSILON.into()
-            && (self.w - other.w).abs() < f32::EPSILON.into()
+        (self.x - other.x).abs() < EPSILON
+            && (self.y - other.y).abs() < EPSILON
+            && (self.z - other.z).abs() < EPSILON
+            && (self.w - other.w).abs() < EPSILON
     }
 }
 

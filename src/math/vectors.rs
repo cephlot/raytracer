@@ -8,16 +8,16 @@ use super::{Sphere, Tuple};
 /// `p` - point tuple to calculate normal vector at
 pub fn normal_at(s: Sphere, p: Tuple) -> Tuple {
     let obj_point = s.transform.inverse() * p;
-    let obj_norm = obj_point - Tuple::point(0.0, 0.0, 0.0);
-    let mut world_normal = s.transform.inverse().transpose() * obj_norm;
+    let obj_normal = obj_point - Tuple::point(0.0, 0.0, 0.0);
+    let mut world_normal = s.transform.inverse().transpose() * obj_normal;
     world_normal.w = 0.0;
 
-    world_normal
+    world_normal.normalize()
 }
 
 #[cfg(test)]
 mod tests {
-    use super::super::{transformations, Matrix};
+    use super::super::transformations;
     use super::*;
 
     #[test]
@@ -87,11 +87,9 @@ mod tests {
     #[test]
     fn should_compute_correct_normal_on_transformed_sphere() {
         let mut s = Sphere::new();
-        s.transform(Matrix::new(4,4).scale(1.0, 0.5, 1.0)*transformations::rotation_z(std::f64::consts::PI / 5.0));
-        let n = normal_at(
-            s,
-            Tuple::point(0.0, 2.0_f64.sqrt() / 2.0, -(2.0_f64.sqrt() / 2.0)),
-        );
+        let m = transformations::scaling(1.0, 0.5, 1.0).rotate_z(std::f64::consts::PI/5.0);
+        s.transform(m);
+        let n = normal_at(s, Tuple::point(0.0, 2.0_f64.sqrt()/2.0, -(2.0_f64.sqrt()/2.0)));
         let reference = Tuple::vector(0.0, 0.97014, -0.24254);
 
         assert_eq!(reference, n);
