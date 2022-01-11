@@ -5,7 +5,7 @@ use crate::math::{reflect, Tuple};
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Material {
     /// Surface color
-    color: Color,
+    pub color: Color,
     /// Ambient reflection, i.e. background lighting
     ambient: f64,
     /// Diffuse reflection - light reflected from a matte surface
@@ -45,10 +45,7 @@ impl Material {
         let mut diffuse = Color::new(0.0, 0.0, 0.0);
         let mut specular = Color::new(0.0, 0.0, 0.0);
 
-        if dot < 0.0 {
-            diffuse = Color::new(0.0, 0.0, 0.0);
-            specular = Color::new(0.0, 0.0, 0.0);
-        } else {
+        if dot >= 0.0 {
             diffuse = color * self.diffuse * dot;
             let reflect = reflect(-light_v, normal);
             let dot_eye = Tuple::dot(&reflect, &eye);
