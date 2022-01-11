@@ -9,7 +9,6 @@ pub struct Ray {
     origin: Tuple,
     /// Direction vector of the ray
     pub direction: Tuple,
-}
 
 /// Represents a sphere object
 #[derive(Debug, PartialEq, Clone)]
