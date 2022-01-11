@@ -8,11 +8,11 @@ pub struct Ray {
     /// Point of origin of the ray
     origin: Tuple,
     /// Direction vector of the ray
-    direction: Tuple,
+    pub direction: Tuple,
 }
 
 /// Represents a sphere object
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Sphere {
     /// Origin point of the sphere
     origin: Tuple,
@@ -21,16 +21,17 @@ pub struct Sphere {
     /// Transformation matrix of the Sphere
     pub transform: Matrix,
     /// Material of the sphere
-    material: Material,
+    pub material: Material,
 }
 
 /// Aggregation of time and object that was intersected
 #[derive(Debug, PartialEq, Clone)]
 pub struct Intersection<'a> {
     /// Time where an object was
-    t: f64,
+    pub t: f64,
     /// Reference to intersected object
-    sphere: &'a Sphere,
+    pub sphere: &'a Sphere,
+    _private: ()
 }
 
 impl Ray {
@@ -122,7 +123,7 @@ impl<'a> Intersection<'a> {
     ///
     /// * `sphere` - reference to intersected object
     pub fn new(t: f64, sphere: &'a Sphere) -> Intersection {
-        Intersection { t, sphere }
+        Intersection { t, sphere, _private: ()}
     }
 
     /// Returns the first nonnegative intersection as a hit
