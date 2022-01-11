@@ -1,5 +1,6 @@
 use super::Matrix;
 use super::Tuple;
+use crate::graphics::Material;
 
 /// Represents an individual ray
 #[derive(Debug, PartialEq, Clone, Copy)]
@@ -19,6 +20,8 @@ pub struct Sphere {
     radius: f64,
     /// Transformation matrix of the Sphere
     pub transform: Matrix,
+    /// Material of the sphere
+    material: Material,
 }
 
 /// Aggregation of time and object that was intersected
@@ -98,6 +101,7 @@ impl Sphere {
             origin: Tuple::point(0.0, 0.0, 0.0),
             radius: 1.0,
             transform: Matrix::new(4, 4),
+            material: Material::new(),
         }
     }
 
@@ -168,6 +172,16 @@ mod tests {
 
         assert_eq!(ray.origin, origin);
         assert_eq!(ray.direction, direction);
+    }
+
+    #[test]
+    fn should_create_sphere_correctly() {
+        let s = Sphere::new();
+
+        assert_eq!(Tuple::point(0.0, 0.0, 0.0), s.origin);
+        assert_eq!(1.0, s.radius);
+        assert_eq!(Matrix::new(4, 4), s.transform);
+        assert_eq!(Material::new(), s.material);
     }
 
     #[test]

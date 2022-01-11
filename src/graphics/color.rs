@@ -1,6 +1,8 @@
 /// Fundamental color component
 use std::ops::{Add, Div, Mul, Neg, Sub};
 
+const EPSILON: f64 = 0.00001;
+
 /// Three-dimensional color representation
 #[derive(Debug, Clone, Copy)]
 pub struct Color {
@@ -110,9 +112,9 @@ impl Div<f64> for Color {
 
 impl PartialEq for Color {
     fn eq(&self, other: &Color) -> bool {
-        (self.r - other.r).abs() < f64::EPSILON
-            && (self.g - other.g).abs() < f64::EPSILON
-            && (self.b - other.b).abs() < f64::EPSILON
+        (self.r - other.r).abs() < EPSILON
+            && (self.g - other.g).abs() < EPSILON
+            && (self.b - other.b).abs() < EPSILON
     }
 }
 
