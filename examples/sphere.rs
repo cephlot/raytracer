@@ -6,16 +6,17 @@ use libray::math::{Intersection, Ray, Sphere, Tuple};
 use std::fs;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let mut canvas = Canvas::new(100, 100);
+    let n_pixels = 200;
+    let mut canvas = Canvas::new(n_pixels, n_pixels);
     let red = Color::new(1.0, 0.0, 0.0);
     let s = Sphere::new();
-    let pixel_size = 7.0 / 100.0;
+    let pixel_size = 7.0 / n_pixels as f64;
     let half = 7.0 / 2.0;
 
-    for y in 0..100 {
+    for y in 0..n_pixels {
         let world_y = half - pixel_size * (y as f64);
 
-        for x in 0..100 {
+        for x in 0..n_pixels {
             let world_x = -half + pixel_size * (x as f64);
             let position = Tuple::point(world_x, world_y, 10.0);
 
