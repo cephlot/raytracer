@@ -7,17 +7,18 @@ use libray::math::{Intersection, Ray, Sphere, Tuple, normal_at};
 use std::fs;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let mut canvas = Canvas::new(100, 100);
+    let n_pixels = 400;
+    let mut canvas = Canvas::new(n_pixels, n_pixels);
     let mut s = Sphere::new();
     s.material.color = Color::new(1.0, 0.2, 0.7); 
-    let pixel_size = 7.0 / 100.0;
+    let pixel_size = 7.0 / n_pixels as f64;
     let half = 7.0 / 2.0;
     let light = Light::new(Tuple::point(-10.0, 10.0, -10.0), Color::new(1.0, 1.0, 1.0));
 
-    for y in 0..100 {
+    for y in 0..n_pixels {
         let world_y = half - pixel_size * (y as f64);
 
-        for x in 0..100 {
+        for x in 0..n_pixels {
             let world_x = -half + pixel_size * (x as f64);
             let position = Tuple::point(world_x, world_y, 10.0);
 

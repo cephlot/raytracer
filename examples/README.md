@@ -11,3 +11,8 @@ positions.
 
 ## Sphere
 Generates a .ppm image of a red sphere on a black canvas with ray tracing.
+
+## Shading
+The same exemple as Sphere but with shading.
+
+![Shaded Sphere](../assets/images/example_shaded_sphere.png)
