@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Canvas","Represents a two-dimensional grid of pixels"],["Color","Three-dimensional color representation"],["Light","Representation of a point light - a light source with no size"],["Material","Representation of a surface material"]]});
