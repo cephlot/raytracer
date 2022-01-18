@@ -9,9 +9,9 @@ pub struct Material {
     /// Ambient reflection, i.e. background lighting
     ambient: f64,
     /// Diffuse reflection - light reflected from a matte surface
-    diffuse: f64,
+    pub diffuse: f64,
     /// Specular reflection - reflection of the light source itself
-    specular: f64,
+    pub specular: f64,
     /// The higher this valye, the smaller and tighter the specular highlight
     shininess: f64,
 }

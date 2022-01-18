@@ -2,7 +2,7 @@ use crate::graphics::Color;
 use crate::math::Tuple;
 
 /// Representation of a point light - a light source with no size
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Light {
     /// Position of the point light
     pub position: Tuple,

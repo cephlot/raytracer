@@ -3,6 +3,8 @@ use std::ops::{Add, Div, Mul, Neg, Sub};
 
 const EPSILON: f64 = 0.00001;
 
+
+
 /// Three-dimensional color representation
 #[derive(Debug, Clone, Copy)]
 pub struct Color {
@@ -16,6 +18,17 @@ pub struct Color {
 }
 
 impl Color {
+    /// Color white
+    pub const WHITE: Color = Color { r: 1.0, g: 1.0, b: 1.0 , _private: () };
+    /// Color red
+    pub const RED: Color = Color { r: 1.0, g: 0.0, b: 0.0 , _private: () };
+    /// Color green
+    pub const GREEN: Color = Color { r: 0.0, g: 1.0, b: 0.0 , _private: () };
+    /// Color blue
+    pub const BLUE: Color = Color { r: 0.0, g: 0.0, b: 1.0 , _private: () };
+    /// Color black
+    pub const BLACK: Color = Color { r: 0.0, g: 0.0, b: 0.0 , _private: () };
+
     /// Creates a new color
     pub fn new(r: f64, g: f64, b: f64) -> Color {
         Color {
