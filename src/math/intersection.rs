@@ -61,7 +61,7 @@ impl Ray {
     /// # Arguments
     ///
     /// * `s` - sphere to calculate intersections for
-    pub fn intersect(&self, s: Sphere) -> Vec<Intersection> {
+    pub fn intersect(&self, s: &Sphere) -> Vec<Intersection> {
         let r = self.transform(s.transform.inverse());
         let v = r.origin - s.origin;
         let a = Tuple::dot(&r.direction, &r.direction);
@@ -76,7 +76,7 @@ impl Ray {
         let first = (-b - discriminant.sqrt()) / (2.0 * a);
         let second = (-b + discriminant.sqrt()) / (2.0 * a);
 
-        vec![Intersection::new(first, s.clone()), Intersection::new(second, s)]
+        vec![Intersection::new(first, s), Intersection::new(second, s)]
     }
 
     /// Calculates and returns the points at which the ray intersects objects in
@@ -89,7 +89,7 @@ impl Ray {
         let mut intersections = vec![];
 
         for s in w.objects {
-            intersections.append(&mut self.intersect(s));
+            intersections.append(&mut self.intersect(&s));
         }
 
         intersections.sort_by(|a, b| a.partial_cmp(b).unwrap());
@@ -137,8 +137,8 @@ impl Intersection{
     /// # Arguments
     ///
     /// * `sphere` - reference to intersected object
-    pub fn new(t: f64, sphere: Sphere) -> Intersection {
-        Intersection { t, sphere, _private: ()}
+    pub fn new(t: f64, sphere: &Sphere) -> Intersection {
+        Intersection { t, sphere: sphere.clone(), _private: ()}
     }
 
     /// Returns the first nonnegative intersection as a hit
@@ -216,7 +216,7 @@ mod tests {
     fn should_return_correct_intersection_points() {
         let r = Ray::new(Tuple::point(0.0, 0.0, -5.0), Tuple::vector(0.0, 0.0, 1.0));
         let s = Sphere::new();
-        let intersections = r.intersect(s);
+        let intersections = r.intersect(&s);
 
         assert_eq!(2, intersections.len());
         assert_eq!(4.0, intersections[0].t);
@@ -227,7 +227,7 @@ mod tests {
     fn tangent_ray_should_have_same_intersection_points() {
         let r = Ray::new(Tuple::point(0.0, 1.0, -5.0), Tuple::vector(0.0, 0.0, 1.0));
         let s = Sphere::new();
-        let intersections = r.intersect(s);
+        let intersections = r.intersect(&s);
 
         assert_eq!(2, intersections.len());
         assert_eq!(5.0, intersections[0].t);
@@ -238,7 +238,7 @@ mod tests {
     fn should_have_zero_intersections_when_ray_misses_sphere() {
         let r = Ray::new(Tuple::point(0.0, 2.0, -5.0), Tuple::vector(0.0, 0.0, 1.0));
         let s = Sphere::new();
-        let intersections = r.intersect(s);
+        let intersections = r.intersect(&s);
 
         assert_eq!(0, intersections.len());
     }
@@ -247,7 +247,7 @@ mod tests {
     fn should_have_two_intersections_when_ray_origininates_inside_sphere() {
         let r = Ray::new(Tuple::point(0.0, 0.0, 0.0), Tuple::vector(0.0, 0.0, 1.0));
         let s = Sphere::new();
-        let intersections = r.intersect(s);
+        let intersections = r.intersect(&s);
 
         assert_eq!(2, intersections.len());
         assert_eq!(-1.0, intersections[0].t);
@@ -258,7 +258,7 @@ mod tests {
     fn should_have_two_intersections_when_ray_origininates_front_of_sphere() {
         let r = Ray::new(Tuple::point(0.0, 0.0, 5.0), Tuple::vector(0.0, 0.0, 1.0));
         let s = Sphere::new();
-        let intersections = r.intersect(s);
+        let intersections = r.intersect(&s);
 
         assert_eq!(2, intersections.len());
         assert_eq!(-6.0, intersections[0].t);
@@ -268,7 +268,7 @@ mod tests {
     #[test]
     fn intersection_should_contain_correct_values() {
         let s = Sphere::new();
-        let i = Intersection::new(3.5, s.clone());
+        let i = Intersection::new(3.5, &s);
 
         assert_eq!(3.5, i.t);
         assert_eq!(s, i.sphere);
@@ -277,8 +277,8 @@ mod tests {
     #[test]
     fn should_aggregate_intersections_correctly() {
         let s = Sphere::new();
-        let a = Intersection::new(1.0, s.clone());
-        let b = Intersection::new(2.0, s);
+        let a = Intersection::new(1.0, &s);
+        let b = Intersection::new(2.0, &s);
         let intersections = vec![a, b];
 
         assert_eq!(2, intersections.len());
@@ -290,7 +290,7 @@ mod tests {
     fn should_contain_sphere_object_reference() {
         let r = Ray::new(Tuple::point(0.0, 0.0, -5.0), Tuple::vector(0.0, 0.0, 1.0));
         let s = Sphere::new();
-        let intersections = r.intersect(s.clone());
+        let intersections = r.intersect(&s);
 
         assert_eq!(2, intersections.len());
         assert_eq!(s, intersections[0].sphere);
@@ -300,31 +300,31 @@ mod tests {
     #[test]
     fn should_compute_the_correct_hit() {
         let s = Sphere::new();
-        let a = Intersection::new(1.0, s.clone());
-        let b = Intersection::new(2.0, s.clone());
+        let a = Intersection::new(1.0, &s);
+        let b = Intersection::new(2.0,&s);
         let intersections = vec![a.clone(), b.clone()];
         let hit = Intersection::hit(intersections);
 
         assert_eq!(Some(a), hit);
 
-        let a = Intersection::new(-1.0, s.clone());
-        let b = Intersection::new(1.0, s.clone());
+        let a = Intersection::new(-1.0, &s);
+        let b = Intersection::new(1.0,&s);
         let intersections = vec![a.clone(), b.clone()];
         let hit = Intersection::hit(intersections);
 
         assert_eq!(Some(b), hit);
 
-        let a = Intersection::new(-2.0, s.clone());
-        let b = Intersection::new(-1.0, s.clone());
+        let a = Intersection::new(-2.0, &s);
+        let b = Intersection::new(-1.0, &s);
         let intersections = vec![a.clone(), b.clone()];
         let hit = Intersection::hit(intersections);
 
         assert_eq!(None, hit);
 
-        let a = Intersection::new(5.0, s.clone());
-        let b = Intersection::new(7.0, s.clone());
-        let c = Intersection::new(-3.0, s.clone());
-        let d = Intersection::new(2.0, s);
+        let a = Intersection::new(5.0, &s);
+        let b = Intersection::new(7.0, &s);
+        let c = Intersection::new(-3.0, &s);
+        let d = Intersection::new(2.0, &s);
         let intersections = vec![a.clone(), b.clone(), c.clone(), d.clone()];
         let hit = Intersection::hit(intersections);
 
@@ -367,7 +367,7 @@ mod tests {
         let r = Ray::new(Tuple::point(0.0, 0.0, -5.0), Tuple::vector(0.0, 0.0, 1.0));
         let mut s = Sphere::new();
         s.transform(transformations::scaling(2.0, 2.0, 2.0));
-        let intersections = r.intersect(s);
+        let intersections = r.intersect(&s);
 
         assert_eq!(2, intersections.len());
         assert_eq!(3.0, intersections[0].t);
@@ -379,7 +379,7 @@ mod tests {
         let r = Ray::new(Tuple::point(0.0, 0.0, -5.0), Tuple::vector(0.0, 0.0, 1.0));
         let mut s = Sphere::new();
         s.transform(transformations::translation(5.0, 0.0, 0.0));
-        let intersections = r.intersect(s);
+        let intersections = r.intersect(&s);
 
         assert_eq!(0, intersections.len());
     }

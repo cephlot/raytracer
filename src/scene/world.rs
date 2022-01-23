@@ -19,6 +19,7 @@ impl World {
 
     
 }
+
 impl Default for World {
     fn default() -> World {
         let mut a = Sphere::new();
