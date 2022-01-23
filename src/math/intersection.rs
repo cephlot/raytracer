@@ -1,5 +1,7 @@
 use super::Matrix;
 use super::Tuple;
+
+use crate::math::normal_at;
 use crate::graphics::Material;
 use crate::scene::World;
 
@@ -10,29 +12,6 @@ pub struct Ray {
     origin: Tuple,
     /// Direction vector of the ray
     pub direction: Tuple,
-}
-
-/// Represents a sphere object
-#[derive(Debug, PartialEq, Clone)]
-pub struct Sphere {
-    /// Origin point of the sphere
-    origin: Tuple,
-    /// Radius of the sphere
-    radius: f64,
-    /// Transformation matrix of the Sphere
-    pub transform: Matrix,
-    /// Material of the sphere
-    pub material: Material,
-}
-
-/// Aggregation of time and object that was intersected
-#[derive(Debug, PartialEq, Clone)]
-pub struct Intersection {
-    /// Time where an object was
-    pub t: f64,
-    /// Reference to intersected object
-    pub sphere: Sphere,
-    _private: ()
 }
 
 impl Ray {
@@ -110,6 +89,19 @@ impl Ray {
     }
 }
 
+/// Represents a sphere object
+#[derive(Debug, PartialEq, Clone)]
+pub struct Sphere {
+    /// Origin point of the sphere
+    origin: Tuple,
+    /// Radius of the sphere
+    radius: f64,
+    /// Transformation matrix of the Sphere
+    pub transform: Matrix,
+    /// Material of the sphere
+    pub material: Material,
+}
+
 impl Sphere {
     /// Returns a new sphere object
     pub fn new() -> Sphere {
@@ -129,6 +121,16 @@ impl Sphere {
     pub fn transform(&mut self, transform: Matrix) {
         self.transform = transform;
     }
+}
+
+/// Aggregation of time and object that was intersected
+#[derive(Debug, PartialEq, Clone)]
+pub struct Intersection {
+    /// Time where an object was
+    pub t: f64,
+    /// Intersected object
+    pub sphere: Sphere,
+    _private: ()
 }
 
 impl Intersection{
@@ -167,6 +169,35 @@ impl Intersection{
 
         Some(min)
     }
+
+    /// Returns the precomputed values
+    /// 
+    /// # Arguments:
+    /// 
+    /// * `r` - ray to precompute values for
+    pub fn prepare_computations(&self, r: &Ray) -> Precomputation {
+        let t = self.t;
+        let object = self.sphere.clone();
+        let point = r.position(self.t);
+        let eye_v = -r.direction;
+        let mut normal_v = normal_at(self.sphere.clone(), point);
+
+        let inside = if Tuple::dot(&normal_v, &eye_v) < 0.0 {
+            normal_v = -normal_v;
+            true
+        } else {
+            false
+        };
+
+        Precomputation::new(
+            t,
+            object,
+            point,
+            eye_v,
+            normal_v,
+            inside
+        )
+    }
 }
 
 impl PartialOrd for Intersection {
@@ -176,6 +207,29 @@ impl PartialOrd for Intersection {
 }
 
 impl Eq for Intersection {}
+
+/// Contains data needed for further computation
+#[derive(Debug, PartialEq, Clone)]
+pub struct Precomputation {
+    /// Time where an object was
+    t: f64,
+    /// Intersected object
+    object: Sphere,
+    /// Where object was intersected
+    point: Tuple,
+    /// Eye vector
+    eye_v: Tuple,
+    /// Normal vector
+    normal_v: Tuple,
+    /// True if hit occurs inside the object, otherwise false
+    inside: bool,
+}
+
+impl Precomputation {
+    pub fn new(t: f64, object: Sphere, point: Tuple, eye_v: Tuple, normal_v: Tuple, inside: bool) -> Precomputation {
+        Precomputation { t, object, point, eye_v, normal_v, inside }
+    }
+}
 
 #[cfg(test)]
 mod tests {
@@ -382,5 +436,44 @@ mod tests {
         let intersections = r.intersect(&s);
 
         assert_eq!(0, intersections.len());
+    }
+
+    #[test]
+    fn prepares_computations_correctly() {
+        let r = Ray::new(Tuple::point(0.0, 0.0, -5.0), Tuple::vector(0.0, 0.0, 1.0));
+        let shape = Sphere::new();
+        let i = Intersection::new(4.0, &shape);
+        let computations = i.prepare_computations(&r);
+        
+        assert_eq!(computations.t, i.t);
+        assert_eq!(computations.object, i.sphere);
+        assert_eq!(computations.point, Tuple::point(0.0, 0.0, -1.0));
+        assert_eq!(computations.eye_v, Tuple::vector(0.0, 0.0, -1.0));
+        assert_eq!(computations.normal_v, Tuple::vector(0.0, 0.0, -1.0));
+    }
+
+    #[test]
+    fn should_prepare_outside_intersection_correctly() {
+        let r = Ray::new(Tuple::point(0.0, 0.0, -5.0), Tuple::vector(0.0, 0.0, 1.0));
+        let shape = Sphere::new();
+        let i = Intersection::new(4.0, &shape);
+        let computations = i.prepare_computations(&r);
+        
+        assert_eq!(computations.inside, false);
+    }
+
+    #[test]
+    fn should_prepare_inside_intersection_correctly() {
+        let r = Ray::new(Tuple::point(0.0, 0.0, 0.0), Tuple::vector(0.0, 0.0, 1.0));
+        let shape = Sphere::new();
+        let i = Intersection::new(1.0, &shape);
+        let computations = i.prepare_computations(&r);
+        
+        assert_eq!(computations.inside, true);
+        assert_eq!(computations.t, i.t);
+        assert_eq!(computations.object, i.sphere);
+        assert_eq!(computations.point, Tuple::point(0.0, 0.0, 1.0));
+        assert_eq!(computations.eye_v, Tuple::vector(0.0, 0.0, -1.0));
+        assert_eq!(computations.normal_v, Tuple::vector(0.0, 0.0, -1.0));
     }
 }
